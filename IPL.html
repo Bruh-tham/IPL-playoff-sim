@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL 2025 Playoffs Simulator</title>
+    <link rel="icon" href="https://emojiapi.dev/api/v1/cricket-game/64.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --background: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            padding: 100px;
+            margin: 0 auto;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        table {
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--card);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            width: calc(100% - 200px);
+            margin: 0 auto 2rem;
+            font-size: 0.95rem;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 1rem;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-weight: 500;
+        }
+
+        .team-name {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .team-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        @media (max-width: 1200px) {
+            body {
+                padding: 40px;
+            }
+            
+            table {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 0.75rem;
+            }
+
+            .team-logo {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        .match-teams {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1rem 0;
+        }
+
+        .team-tile {
+            width: 120px;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .match-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .match-nr {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .match-nr button {
+            font-family: 'Poppins', sans-serif;
+            background: none;
+            border: 2px solid var(--border);
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 140px;
+        }
+
+        .match-nr button:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+
+        .match-nr button.selected {
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--primary);
+            border-color: var(--primary);
+            transform: scale(0.98);
+        }
+
+        .position-up {
+            color: var(--success);
+            margin-left: 4px;
+        }
+
+        .position-down {
+            color: var(--danger);
+            margin-left: 4px;
+        }
+
+        .position-same {
+            color: var(--text);
+            opacity: 0.5;
+            margin-left: 4px;
+        }
+
+        .simulator {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .match-row {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 0.75rem 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 500px;
+            transition: all 0.2s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .team-tile {
+            position: relative;
+            cursor: pointer;
+            padding: 1rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+            border: 2px solid var(--border);
+        }
+
+        .team-tile span {
+            font-weight: 500;  /* Medium font weight */
+            display: block;
+        }
+
+        .team-tile:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+
+        .team-tile.selected {
+            background: rgba(37, 99, 235, 0.08);  /* Much lighter blue */
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: scale(0.98);
+            box-shadow: inset 0 0 0 1.5px var(--primary);
+        }
+
+        .team-tile img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            margin: 0 auto 8px;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .team-tile img {
+                width: 36px;
+                height: 36px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .team-tile img {
+                width: 32px;
+                height: 32px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .match-teams {
+                gap: 1rem;
+            }
+            
+            .team-tile {
+                width: 100px;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .action-buttons {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .action-buttons button {
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-buttons button:first-child {
+            background: var(--success);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+        }
+
+        .action-buttons button:last-child {
+            background: var(--danger);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        .action-buttons button:first-child:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(34, 197, 94, 0.3);
+        }
+
+        .action-buttons button:last-child:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Softer colors for chances */
+        .chance-high {
+            color: #059669;  /* Softer green */
+            font-weight: 600;
+        }
+
+        .chance-medium {
+            color: #d97706;  /* Softer amber */
+            font-weight: 600;
+        }
+
+        .chance-low {
+            color: #dc2626;  /* Same red but will appear less due to context */
+            font-weight: 600;
+        }
+
+        .change-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .change-pts {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .change-pts.positive { color: var(--success); }
+        .change-pts.negative { color: var(--danger); }
+        .change-pts.neutral { color: var(--text); opacity: 0.7; }
+
+        .change-pct {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .change-pct.up { color: var(--success); }
+        .change-pct.down { color: var(--danger); }
+        .change-pct.same { color: var(--text); opacity: 0.7; }
+
+        .arrow {
+            display: inline-block;
+            font-size: 0.8rem;
+            line-height: 1;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            opacity: 0.9;
+            background-color: var(--card);
+            box-shadow: 0 -4px 6px -1px rgb(0 0 0 / 0.1);
+            font-size: 1.1rem;
+        }
+
+        .footer a {
+            color: inherit;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            color: var(--primary);
+        }
+
+        .footer svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .heart {
+            color: var(--danger);
+            display: inline-block;
+            margin: 0 0.25rem;
+        }
+
+        .position-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .position-arrow {
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .position-up { color: var(--success); }
+        .position-down { color: var(--danger); }
+    </style>
+</head>
+<body>
+<h1>IPL 2025 Playoffs Simulator</h1>
+
+<table id="pointsTable">
+    <thead>
+        <tr>
+            <th>Position</th>
+            <th>Team</th>
+            <th>P</th>
+            <th>W</th>
+            <th>L</th>
+            <th>NR</th>
+            <th>NRR</th>
+            <th>Pts</th>
+            <th>Top 4 %</th>
+            <th>Top 2 %</th>
+            <th>Changes</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<div class="simulator">
+    <h2>Remaining Schedule</h2>
+    <div id="matchList"></div>
+</div>
+
+<footer class="footer">
+    Made with <span class="heart">♥</span> by 
+    <a href="https://twitter.com/Prathamjc18" target="_blank">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+        </svg>
+        @Prathamjc18
+    </a>
+</footer>
+
+<div class="action-buttons">
+    <button onclick="window.scrollTo(0,0)" title="Go to top">↑</button>
+    <button onclick="resetData()" title="Reset data">↺</button>
+</div>
+<script>
+    const teamLogos = {
+        CSK: "https://scores.iplt20.com/ipl/teamlogos/CSK.png",
+        DC: "https://scores.iplt20.com/ipl/teamlogos/DC.png",
+        GT: "https://scores.iplt20.com/ipl/teamlogos/GT.png",
+        KKR: "https://scores.iplt20.com/ipl/teamlogos/KKR.png",
+        LSG: "https://scores.iplt20.com/ipl/teamlogos/LSG.png",
+        MI: "https://scores.iplt20.com/ipl/teamlogos/MI.png",
+        PBKS: "https://scores.iplt20.com/ipl/teamlogos/PBKS.png",
+        RCB: "https://scores.iplt20.com/ipl/teamlogos/RCB.png",
+        RR: "https://scores.iplt20.com/ipl/teamlogos/RR.png",
+        SRH: "https://scores.iplt20.com/ipl/teamlogos/SRH.png"
+    };
+
+    const initialTeams = [
+        { name: "CSK", P: 14, W: 4, L: 10, NR: 0, NRR: -0.647, top4Chance: 0, top2Chance: 0 },
+        { name: "DC", P: 14, W: 7, L: 6, NR: 1, NRR: 0.011, top4Chance: 0, top2Chance: 0 },
+        { name: "GT", P: 14, W: 9, L: 5, NR: 0, NRR: 0.256, top4Chance: 0, top2Chance: 0 },
+        { name: "KKR", P: 14, W: 5, L: 7, NR: 2, NRR: -0.305, top4Chance: 0, top2Chance: 0 },
+        { name: "LSG", P: 13, W: 6, L: 7, NR: 0, NRR: -0.337, top4Chance: 0, top2Chance: 0 },
+        { name: "MI", P: 14, W: 8, L: 6, NR: 0, NRR: 1.142, top4Chance: 0, top2Chance: 0 },
+        { name: "PBKS", P: 14, W: 9, L: 4, NR: 1, NRR: 0.372, top4Chance: 0, top2Chance: 0 },
+        { name: "RCB", P: 13, W: 8, L: 4, NR: 1, NRR: 0.255, top4Chance: 0, top2Chance: 0 },
+        { name: "RR", P: 14, W: 4, L: 10, NR: 0, NRR: -0.549, top4Chance: 0, top2Chance: 0 },
+        { name: "SRH", P: 14, W: 6, L: 7, NR: 1, NRR: -0.241, top4Chance: 0, top2Chance: 0 }
+    ].map(team => ({
+        ...team, 
+        Pts: (team.W * 2) + team.NR
+    }));
+
+    const initialSchedule = [
+        { num: 70, date: "27-05-2025", time: "7:30 PM", home: "LSG", away: "RCB", completed: false }
+    ];
+
+    let teams = JSON.parse(JSON.stringify(initialTeams));
+    let schedule = JSON.parse(JSON.stringify(initialSchedule));
+    let initialSortedTeams = null;
+
+    function validateTeams(teams) {
+        return teams.every(team => 
+            team.name && 
+            typeof team.P === "number" && 
+            typeof team.W === "number" && 
+            typeof team.L === "number" && 
+            typeof team.NR === "number" && 
+            typeof team.NRR === "number" && 
+            typeof team.Pts === "number"
+        );
+    }
+
+    function renderTable() {
+        try {
+            if (!document.querySelector("#pointsTable")) {
+                console.error("Error: #pointsTable not found in DOM");
+                return;
+            }
+            let tableBody = document.querySelector("#pointsTable tbody");
+            if (!tableBody) {
+                tableBody = document.createElement("tbody");
+                document.querySelector("#pointsTable").appendChild(tableBody);
+            }
+            if (!teams || !Array.isArray(teams)) {
+                console.error("Error: teams array is not defined or invalid");
+                return;
+            }
+            tableBody.innerHTML = "";
+            const sortedTeams = [...teams].sort((a, b) => {
+                if (b.Pts !== a.Pts) return b.Pts - a.Pts;
+                return b.NRR - a.NRR;
+            });
+
+            if (!initialSortedTeams) {
+                initialSortedTeams = sortedTeams.map(team => team.name);
+            }
+
+            sortedTeams.forEach((team, index) => {
+                const originalIndex = initialSortedTeams.indexOf(team.name);
+                const positionChange = originalIndex - index;
+                const positionDisplay = positionChange !== 0 ? 
+                    `<span class="position-change ${positionChange > 0 ? 'position-up' : 'position-down'}">
+                        <span class="position-arrow">${positionChange > 0 ? '▲' : '▼'}</span>${Math.abs(positionChange)}
+                    </span>` : '';
+
+                const originalTeam = initialTeams.find(t => t.name === team.name);
+                const pointsGained = team.Pts - originalTeam.Pts;
+                const pctChange = (parseFloat(team.top4Chance) - (originalTeam.originalTop4 || 0)).toFixed(1);
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>
+                        ${index + 1}
+                        ${positionDisplay}
+                    </td>
+                    <td>
+                        <div class="team-name">
+                            <img src="${teamLogos[team.name]}" alt="${team.name}" class="team-logo">
+                            ${team.name}
+                        </div>
+                    </td>
+                    <td>${team.P}</td>
+                    <td>${team.W}</td>
+                    <td>${team.L}</td>
+                    <td>${team.NR}</td>
+                    <td>${team.NRR > 0 ? '+' : ''}${team.NRR.toFixed(3)}</td>
+                    <td>${team.Pts}</td>
+                    <td class="${getChanceClass(team.top4Chance)}">${team.top4Chance}%</td>
+                    <td class="${getChanceClass(team.top2Chance)}">${team.top2Chance}%</td>
+                    <td>
+                        <div class="change-indicator">
+                            <span class="change-pts ${pointsGained > 0 ? 'positive' : pointsGained < 0 ? 'negative' : 'neutral'}">
+                                ${pointsGained > 0 ? '+' : ''}${pointsGained}
+                            </span>
+                            <span class="change-pct ${pctChange > 0 ? 'up' : pctChange < 0 ? 'down' : 'same'}">
+                                ${Math.abs(pctChange)}%
+                                <span class="arrow">${pctChange > 0 ? '▲' : pctChange < 0 ? '▼' : ''}</span>
+                            </span>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error("Error rendering table:", error);
+        }
+    }
+
+    function getChanceClass(value) {
+        if (value >= 75) return 'chance-high';
+        if (value >= 25) return 'chance-medium';
+        return 'chance-low';
+    }
+
+    function renderSchedule() {
+        try {
+            const matchList = document.getElementById("matchList");
+            if (!matchList) return;
+            matchList.innerHTML = "";
+            schedule.forEach((fixture, index) => {
+                const div = document.createElement("div");
+                div.className = `match-row${fixture.completed ? ' completed' : ''}${fixture.autoSelected ? ' auto-selected' : ''}`;
+                div.innerHTML = `
+                    <div class="match-info">
+                        Match ${fixture.num} • ${fixture.date} • ${fixture.time}
+                    </div>
+                    <div class="match-teams">
+                        <div class="team-tile ${fixture.selectedWinner === fixture.home ? 'selected' : ''}" 
+                            onclick="handleButtonClick(${index}, '${fixture.home}')">
+                            <img src="${teamLogos[fixture.home]}" alt="${fixture.home}">
+                            <span>${fixture.home}</span>
+                        </div>
+                        <div style="font-weight: 600; opacity: 0.5; align-self: center;">VS</div>
+                        <div class="team-tile ${fixture.selectedWinner === fixture.away ? 'selected' : ''}"
+                            onclick="handleButtonClick(${index}, '${fixture.away}')">
+                            <img src="${teamLogos[fixture.away]}" alt="${fixture.away}">
+                            <span>${fixture.away}</span>
+                        </div>
+                    </div>
+                    <div class="match-nr">
+                        <button onclick="handleButtonClick(${index}, 'NR')"
+                            class="${fixture.selectedWinner === 'NR' ? 'selected' : ''}">
+                            No Result
+                        </button>
+                    </div>
+                `;
+                matchList.appendChild(div);
+            });
+        } catch (error) {
+            console.error("Error rendering schedule:", error);
+        }
+    }
+
+    function handleButtonClick(index, winner) {
+        try {
+            const fixture = schedule[index];
+            if (fixture.selectedWinner === winner) {
+                // Deselect if same button clicked
+                selectWinner(index, null, false);
+            } else {
+                selectWinner(index, winner, false);
+            }
+            simulateMonteCarlo();
+            renderTable();
+        } catch (error) {
+            console.error("Error handling button click:", error);
+        }
+    }
+
+    function selectWinner(index, winner, autoSelect = false) {
+        try {
+            const fixture = schedule[index];
+            const t1 = teams.find(t => t.name === fixture.home);
+            const t2 = teams.find(t => t.name === fixture.away);
+
+            if (!t1 || !t2) {
+                console.error(`Error: Team not found - Home: ${fixture.home}, Away: ${fixture.away}`);
+                return;
+            }
+
+            // First revert any previous selection
+            if (fixture.selectedWinner) {
+                if (fixture.selectedWinner === "NR") {
+                    t1.NR = Math.max(0, t1.NR - 1);
+                    t2.NR = Math.max(0, t2.NR - 1);
+                    t1.Pts = Math.max(0, t1.Pts - 1);
+                    t2.Pts = Math.max(0, t2.Pts - 1);
+                } else if (fixture.selectedWinner === t1.name) {
+                    t1.W = Math.max(0, t1.W - 1);
+                    t2.L = Math.max(0, t2.L - 1);
+                    t1.Pts = Math.max(0, t1.Pts - 2);
+                } else if (fixture.selectedWinner === t2.name) {
+                    t2.W = Math.max(0, t2.W - 1);
+                    t1.L = Math.max(0, t1.L - 1);
+                    t2.Pts = Math.max(0, t2.Pts - 2);
+                }
+                if (fixture.completed) {
+                    t1.P = Math.max(0, t1.P - 1);
+                    t2.P = Math.max(0, t2.P - 1);
+                }
+            }
+
+            // Apply new selection if there is one
+            if (winner) {
+                t1.P = (t1.P || 0) + 1;
+                t2.P = (t2.P || 0) + 1;
+                if (winner === "NR") {
+                    t1.NR = (t1.NR || 0) + 1;
+                    t2.NR = (t2.NR || 0) + 1;
+                    t1.Pts = (t1.Pts || 0) + 1;
+                    t2.Pts = (t2.Pts || 0) + 1;
+                } else if (winner === t1.name) {
+                    t1.W = (t1.W || 0) + 1;
+                    t2.L = (t2.L || 0) + 1;
+                    t1.Pts = (t1.Pts || 0) + 2;
+                } else if (winner === t2.name) {
+                    t2.W = (t2.W || 0) + 1;
+                    t1.L = (t1.L || 0) + 1;
+                    t2.Pts = (t2.Pts || 0) + 2;
+                }
+                fixture.selectedWinner = winner;
+                fixture.completed = autoSelect || true;
+                // Validate P = W + L + NR
+                if (t1.P !== (t1.W + t1.L + t1.NR) || t2.P !== (t2.W + t2.L + t2.NR)) {
+                    console.warn(`Data inconsistency: ${t1.name} P=${t1.P}, W+L+NR=${t1.W+t1.L+t1.NR}; ${t2.name} P=${t2.P}, W+L+NR=${t2.W+t2.L+t2.NR}`);
+                }
+            } else {
+                fixture.selectedWinner = null;
+                fixture.completed = false;
+            }
+
+            fixture.autoSelected = autoSelect;
+            renderTable();
+            renderSchedule();
+        } catch (error) {
+            console.error("Error selecting winner:", error);
+        }
+    }
+
+    const style = document.createElement('style');
+    style.textContent = `
+        .auto-selected {
+            background-color: #ffeeba !important;
+            border-color: #ffc107 !important;
+        }
+    `;
+    document.head.appendChild(style);
+
+    function submitMatch(index) {
+        try {
+            const fixture = schedule[index];
+            const winner = fixture.selectedWinner;
+            if (!winner) {
+                alert("Please select a result!");
+                return;
+            }
+            const t1 = teams.find(t => t.name === fixture.home);
+            const t2 = teams.find(t => t.name === fixture.away);
+            if (!t1 || !t2) {
+                console.error(`Error: Team not found - Home: ${fixture.home}, Away: ${fixture.away}`);
+                return;
+            }
+            t1.P++;
+            t2.P++;
+            if (winner === "NR") {
+                t1.NR++;
+                t2.NR++;
+                t1.Pts += 1;
+                t2.Pts += 1;
+            } else if (winner === t1.name) {
+                t1.W++;
+                t1.Pts += 2;
+                t2.L++;
+            } else {
+                t2.W++;
+                t2.Pts += 2;
+                t1.L++;
+            }
+            fixture.completed = true;
+            renderTable();
+            renderSchedule();
+        } catch (error) {
+            console.error("Error submitting match:", error);
+        }
+    }
+
+    function resetData() {
+        try {
+            teams = JSON.parse(JSON.stringify(initialTeams));
+            schedule = JSON.parse(JSON.stringify(initialSchedule));
+            simulateMonteCarlo();
+            renderTable();
+            renderSchedule();
+        } catch (error) {
+            console.error("Error resetting data:", error);
+        }
+    }
+
+    function populateDropdowns() {
+        try {
+            const teamSelect = document.getElementById("teamSelect");
+            const positionSelect = document.getElementById("positionSelect");
+            if (!teamSelect || !positionSelect) {
+                console.error("Error: Dropdown elements not found");
+                return;
+            }
+            initialTeams.forEach(team => {
+                const option = document.createElement("option");
+                option.value = team.name;
+                option.textContent = team.name;
+                teamSelect.appendChild(option);
+            });
+            for (let i = 1; i <= initialTeams.length; i++) {
+                const option = document.createElement("option");
+                option.value = i;
+                option.textContent = i;
+                positionSelect.appendChild(option);
+            }
+        } catch (error) {
+            console.error("Error populating dropdowns:", error);
+        }
+    }
+
+    function simulateMonteCarlo(numSimulations = 10000) {
+        try {
+            const top4Count = {};
+            const top2Count = {};
+            teams.forEach(t => {
+                top4Count[t.name] = 0;
+                top2Count[t.name] = 0;
+            });
+
+            for (let sim = 0; sim < numSimulations; sim++) {
+                let simTeams = JSON.parse(JSON.stringify(teams));
+                let remainingMatches = schedule.filter(m => !m.completed);
+
+                remainingMatches.forEach(match => {
+                    const random = Math.random();
+                    const t1 = simTeams.find(t => t.name === match.home);
+                    const t2 = simTeams.find(t => t.name === match.away);
+                    t1.P = (t1.P || 0) + 1;
+                    t2.P = (t2.P || 0) + 1;
+
+                    if (random < 0.45) {
+                        t1.Pts += 2;
+                        t1.W++;
+                        t2.L++;
+                    } else if (random < 0.9) {
+                        t2.Pts += 2;
+                        t2.W++;
+                        t1.L++;
+                    } else {
+                        t1.Pts += 1;
+                        t2.Pts += 1;
+                        t1.NR++;
+                        t2.NR++;
+                    }
+                });
+
+                const sortedSimTeams = simTeams.sort((a, b) => b.Pts - a.Pts || b.NRR - a.NRR);
+                sortedSimTeams.slice(0, 4).forEach(t => top4Count[t.name]++);
+                sortedSimTeams.slice(0, 2).forEach(t => top2Count[t.name]++);
+            }
+
+            teams.forEach(team => {
+                team.top4Chance = (top4Count[team.name] / numSimulations * 100).toFixed(1);
+                team.top2Chance = (top2Count[team.name] / numSimulations * 100).toFixed(1);
+            });
+        } catch (error) {
+            console.error("Error in Monte Carlo simulation:", error);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        try {
+            if (!validateTeams(initialTeams)) {
+                console.error("Invalid team data detected!");
+                return;
+            }
+            simulateMonteCarlo();
+            initialTeams.forEach(team => {
+                const simTeam = teams.find(t => t.name === team.name);
+                team.originalTop4 = parseFloat(simTeam.top4Chance) || 0;
+                team.originalTop2 = parseFloat(simTeam.top2Chance) || 0;
+            });
+            renderTable();
+            renderSchedule();
+        } catch (error) {
+            console.error("Error during initialization:", error);
+        }
+    });
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9375e15b8d6e4535',t:'MTc0NTgzNjE4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>
