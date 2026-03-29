@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Advanced Editor & NRR - IPL 2026</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏏</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb; --primary-hover: #1d4ed8; --success: #22c55e; 
+            --background: #f8fafc; --card: #ffffff; --text: #1e293b; --text-muted: #64748b; 
+            --border: #e2e8f0; --tile-hover: rgba(37, 99, 235, 0.08); --shadow: rgba(0, 0, 0, 0.08);
+        }
+        body.dark-theme {
+            --primary: #3b82f6; --primary-hover: #60a5fa; --success: #4ade80; 
+            --background: #0f172a; --card: #1e293b; --text: #f8fafc; --text-muted: #94a3b8; 
+            --border: #334155; --tile-hover: rgba(59, 130, 246, 0.12); --shadow: rgba(0, 0, 0, 0.4);
+        }
+        
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { overflow-x: hidden; }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            padding: 30px 20px; 
+            margin: 0 auto; 
+            background-color: var(--background); 
+            color: var(--text); 
+            line-height: 1.6; 
+            transition: background-color 0.3s, color 0.3s; 
+            max-width: 1600px; 
+        }
+
+        /* Header & Navigation */
+        .header-container { display: flex; justify-content: center; align-items: center; margin-bottom: 1rem; position: relative; width: 100%; }
+        h1 { font-family: 'Montserrat', sans-serif; font-size: 2.25rem; font-weight: 700; margin: 0; color: var(--primary); text-align: center; }
+
+        .top-controls { position: absolute; right: 0; display: flex; flex-direction: row; align-items: center; gap: 12px; }
+        .theme-toggle-top { width: 42px; height: 42px; border: none; border-radius: 50%; background: var(--text); color: var(--background) !important; font-size: 1.15rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px var(--shadow); }
+        .theme-toggle-top:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        
+        .nav-link { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.85rem; color: var(--primary); text-decoration: none; background: var(--tile-hover); padding: 8px 14px; border-radius: 8px; transition: all 0.2s; border: 1px solid transparent; display: flex; align-items: center; gap: 6px; }
+        .nav-link:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        body.dark-theme .nav-link { color: #60a5fa; }
+        body.dark-theme .nav-link:hover { color: #ffffff; }
+
+        .master-reset-btn { display: block; margin: 0 auto 2rem; background-color: #ef4444 !important; color: #ffffff !important; border: none; padding: 10px 24px; border-radius: 8px; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 6px var(--shadow); }
+        .master-reset-btn:hover { background-color: #dc2626 !important; transform: translateY(-2px); box-shadow: 0 6px 10px var(--shadow); }
+
+        /* Split Layout Grid */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; width: 100%; max-width: 100%; }
+        .panel { display: flex; flex-direction: column; width: 100%; min-width: 0; }
+        
+        .section-header { display: flex; justify-content: center; align-items: center; margin-bottom: 1rem; gap: 8px; }
+        .section-title { font-family: 'Montserrat', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--text); margin: 0; }
+        .info-btn { background: var(--tile-hover); color: var(--primary); border: 1px solid var(--primary); border-radius: 50%; width: 24px; height: 24px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .info-btn:hover { background: var(--primary); color: white; transform: scale(1.1); }
+
+        /* Modals (Dialog Boxes) */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+        .modal-overlay.open { opacity: 1; pointer-events: auto; }
+        .modal-content { background: var(--card); border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; transform: translateY(20px); transition: transform 0.2s; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border); }
+        .modal-overlay.open .modal-content { transform: translateY(0); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .modal-title { font-family: 'Montserrat', sans-serif; font-size: 1.25rem; font-weight: 700; color: var(--primary); }
+        .modal-close { background: none; border: none; font-size: 1.75rem; cursor: pointer; color: var(--text-muted); line-height: 1; }
+        .modal-close:hover { color: #ef4444; }
+        .modal-body { font-size: 0.95rem; color: var(--text); line-height: 1.6; }
+        .modal-body ul { padding-left: 20px; margin-top: 10px; }
+        .modal-body li { margin-bottom: 6px; }
+        .code-badge { background: var(--tile-hover); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; }
+
+        /* Tables & Responsiveness */
+        .table-container { width: 100%; overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 6px -1px var(--shadow); background: var(--card); -webkit-overflow-scrolling: touch; margin-bottom: 1rem;}
+        table { width: 100%; border-spacing: 0; font-size: 0.9rem; font-family: 'Poppins', sans-serif; text-align: center; min-width: max-content; }
+        th { background: var(--primary); color: white; font-weight: 600; padding: 1rem 0.5rem; font-size: 0.85rem; white-space: nowrap; }
+        td { padding: 0.75rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: middle; white-space: nowrap; }
+        
+        .team-name { display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start; padding-left: 0.5rem; }
+        .team-logo { width: 36px; height: 36px; object-fit: contain; }
+
+        /* Table Delta Arrows */
+        .position-change { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.85rem; font-weight: 600; margin-left: 6px; }
+        .position-up { color: var(--success); }
+        .position-down { color: #ef4444; }
+        .position-arrow { font-size: 0.7rem; }
+
+        /* Points Table Steppers */
+        .stepper { display: flex; align-items: center; justify-content: center; gap: 4px; background: var(--background); border-radius: 6px; padding: 2px; border: 1px solid var(--border); width: max-content; margin: 0 auto; }
+        .step-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .step-btn:hover { background: var(--tile-hover); color: var(--primary); border-color: var(--primary); }
+        .step-val { font-weight: 700; width: 18px; text-align: center; font-size: 0.9rem; }
+        .pts-val-badge { font-weight: 700; font-size: 1.05rem; color: var(--primary); }
+
+        /* NRR Inputs */
+        .nrr-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .stat-main { font-weight: 700; font-size: 1rem; color: var(--text); }
+        .adj-inp { width: 45px; padding: 4px; font-size: 0.75rem; text-align: center; border-radius: 4px; border: 1px solid var(--border); background: var(--background); color: var(--text); font-family: 'Poppins', sans-serif; transition: all 0.2s; }
+        .adj-inp:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px var(--tile-hover); }
+        .adj-inp::-webkit-outer-spin-button, .adj-inp::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .adj-inp[type=number] { -moz-appearance: textfield; }
+
+        .apply-btn { background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; font-family: 'Poppins', sans-serif; }
+        .apply-btn:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 6px var(--shadow); }
+        
+        .reset-btn-small { background: var(--border); color: var(--text-muted); border: none; width: 28px; height: 28px; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+        .reset-btn-small:hover { background: #ef4444; color: white; }
+
+        .nrr-result { font-weight: 700; font-size: 0.95rem; }
+        .nrr-positive { color: var(--success); }
+        .nrr-negative { color: #ef4444; } 
+        .nrr-neutral { color: var(--text-muted); }
+
+        /* Animation for Accessibilty (Row Jump Highlight) */
+        @keyframes flashHighlight {
+            0% { background-color: rgba(245, 158, 11, 0.4); } /* Amber overlay */
+            100% { background-color: transparent; }
+        }
+        .highlight-flash { animation: flashHighlight 2s ease-out; }
+        
+        /* Legends & Footer */
+        .legend-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin: 2rem auto 0; background: var(--card); padding: 1rem; border-radius: 12px; border: 1px solid var(--border); max-width: 1000px; box-shadow: 0 4px 6px -1px var(--shadow); }
+        .legend-item { display: flex; gap: 8px; align-items: center; font-size: 0.85rem;}
+        .legend-key { font-weight: 700; color: var(--primary); width: 35px; }
+
+        .footer { text-align: center; padding: 1.25rem; margin: 2rem auto 0; font-family: 'Inter', sans-serif; color: var(--text-muted); background-color: var(--card); border-radius: 12px; box-shadow: 0 4px 6px -1px var(--shadow); font-size: 0.95rem; max-width: 1000px; }
+        .footer a { color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 500; transition: color 0.2s; }
+        .footer a:hover { color: var(--primary); }
+        .footer svg { width: 16px; height: 16px; }
+        .heart { color: #ef4444; display: inline-block; margin: 0 0.25rem; }
+        
+        /* Floating Action Buttons */
+        .action-buttons { position: fixed; bottom: 2rem; right: 2rem; display: flex; gap: 1rem; z-index: 100; }
+        .action-buttons button { width: 44px; height: 44px; border: none; border-radius: 50%; color: white; font-size: 1.25rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-top { background: var(--success); box-shadow: 0 4px 6px var(--shadow); }
+        .action-buttons button:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+        /* Media Queries */
+        @media (max-width: 1200px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .adj-inp { width: 50px; font-size: 0.85rem; padding: 6px; }
+            .stat-main { font-size: 1.1rem; }
+        }
+        @media (max-width: 768px) {
+            .header-container { flex-direction: column; align-items: center; gap: 15px; margin-bottom: 1.5rem; position: static; }
+            .top-controls { position: static; flex-direction: row; justify-content: center; width: 100%; }
+            h1 { font-size: 1.75rem; text-align: center; }
+            .panel { padding: 0; box-sizing: border-box; }
+            .modal-content { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-container">
+    <h1>Advanced Dashboard</h1>
+    <div class="top-controls">
+        <button class="theme-toggle-top" onclick="toggleTheme()" title="Toggle Dark Mode"><span style="pointer-events: none;">🌓</span></button>
+        <a href="index.html" class="nav-link"><span style="font-size: 1.2em; line-height: 1;">&larr;</span> Playoffs Simulator</a>
+    </div>
+</div>
+
+<button class="master-reset-btn" onclick="resetAllData()">↺ Reset All Changes</button>
+
+<div class="dashboard-grid">
+    <div class="panel">
+        <div class="section-header">
+            <h2 class="section-title">Live NRR Calculator</h2>
+            <button class="info-btn" onclick="openModal('nrrModal')" title="Calculator Instructions">?</button>
+        </div>
+        
+        <div class="table-container">
+            <table id="nrrTable">
+                <thead>
+                    <tr>
+                        <th title="Team">Team</th>
+                        <th title="Total Runs Scored">RS</th>
+                        <th title="Total Overs Faced">OF</th>
+                        <th title="Total Runs Conceded">RC</th>
+                        <th title="Total Overs Bowled">OB</th>
+                        <th title="Calculated NRR">LIVE NRR</th>
+                        <th>Action</th>
+                        <th>Reset</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="section-header">
+            <h2 class="section-title">Points Table Editor</h2>
+            <button class="info-btn" onclick="openModal('ptsModal')" title="Points Table Instructions">?</button>
+        </div>
+
+        <div class="table-container">
+            <table id="ptsTable">
+                <thead>
+                    <tr>
+                        <th>Pos</th>
+                        <th>Team</th>
+                        <th title="Matches Played">MP</th>
+                        <th title="Wins">W</th>
+                        <th title="Losses">L</th>
+                        <th title="No Result">NR</th>
+                        <th title="Calculated Points">Pts</th>
+                        <th title="Takes live NRR from left table">LIVE NRR</th>
+                        <th>Reset</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="legend-grid">
+    <div class="legend-item"><span class="legend-key">MP</span> Matches Played</div>
+    <div class="legend-item"><span class="legend-key">W</span> Wins (2 pts)</div>
+    <div class="legend-item"><span class="legend-key">L</span> Losses (0 pts)</div>
+    <div class="legend-item"><span class="legend-key">NR</span> No Result (1 pt)</div>
+    <div class="legend-item"><span class="legend-key">Pts</span> Total Points</div>
+    <div class="legend-item"><span class="legend-key">RS</span> Runs Scored</div>
+    <div class="legend-item"><span class="legend-key">OF</span> Overs Faced</div>
+    <div class="legend-item"><span class="legend-key">RC</span> Runs Conceded</div>
+    <div class="legend-item"><span class="legend-key">OB</span> Overs Bowled</div>
+</div>
+
+<footer class="footer">
+    Made with <span class="heart">♥</span> by 
+    <a href="https://twitter.com/Prathamjc18" target="_blank">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+        </svg>
+        @Prathamjc18
+    </a>
+</footer>
+
+<div class="modal-overlay" id="nrrModal" onclick="closeModal(event, 'nrrModal')">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="modal-title">NRR Calculator Guide</span>
+            <button class="modal-close" onclick="closeModal(null, 'nrrModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Type the newest match stats into the input fields and click <strong>Add</strong>. It will automatically update the Live NRR and push the changes to the Points Table.</p>
+            <ul>
+                <li><span class="code-badge">RS</span> <strong>Runs Scored</strong></li>
+                <li><span class="code-badge">OF</span> <strong>Overs Faced</strong></li>
+                <li><span class="code-badge">RC</span> <strong>Runs Conceded</strong></li>
+                <li><span class="code-badge">OB</span> <strong>Overs Bowled</strong></li>
+            </ul>
+            <p><strong>Over Math:</strong> Standard cricket overs convert automatically (e.g., typing <code>19.4</code> seamlessly converts to <code>19.666</code> for math).</p>
+            <p><strong>All Out Rule:</strong> If a team is bowled out, their overs faced legally count as exactly <code>20.0</code> regardless of actual balls faced. Ensure you enter 20 if an all-out occurs.</p>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="ptsModal" onclick="closeModal(event, 'ptsModal')">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="modal-title">Points Table Guide</span>
+            <button class="modal-close" onclick="closeModal(null, 'ptsModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Use the <code>+</code> and <code>-</code> arrow buttons to adjust the standings on the fly. The row will dynamically sort and flash yellow so you can easily track where your edited team jumped to.</p>
+            <ul>
+                <li><span class="code-badge">MP</span> <strong>Matches Played</strong> (Max 14)</li>
+                <li><span class="code-badge">W</span> <strong>Wins</strong> (Awards 2 pts)</li>
+                <li><span class="code-badge">L</span> <strong>Losses</strong> (Awards 0 pts)</li>
+                <li><span class="code-badge">NR</span> <strong>No Result</strong> (Awards 1 pt)</li>
+                <li><span class="code-badge">Pts</span> <strong>Total Points</strong> (Auto-Calculated)</li>
+            </ul>
+            <p>The <strong>LIVE NRR</strong> column cannot be edited here. It is strictly mirrored from the Live NRR Calculator table on the left side of the dashboard to ensure mathematical accuracy.</p>
+        </div>
+    </div>
+</div>
+
+<div class="action-buttons">
+    <button class="btn-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Go to top">↑</button>
+</div>
+
+<script>
+    // --- Theme Management ---
+    function initTheme() {
+        if (localStorage.getItem('ipl-simulator-theme') === 'dark' || (!localStorage.getItem('ipl-simulator-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.body.classList.add('dark-theme');
+        }
+    }
+    function toggleTheme() {
+        document.body.classList.toggle('dark-theme');
+        localStorage.setItem('ipl-simulator-theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
+    }
+    initTheme();
+
+    // --- Modal Management ---
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(event, id) {
+        if (!event || event.target.id === id || event.target.classList.contains('modal-close')) {
+            document.getElementById(id).classList.remove('open');
+        }
+    }
+
+    const teamLogos = {
+        CSK: "https://scores.iplt20.com/ipl/teamlogos/CSK.png", DC: "https://scores.iplt20.com/ipl/teamlogos/DC.png", GT: "https://scores.iplt20.com/ipl/teamlogos/GT.png",
+        KKR: "https://scores.iplt20.com/ipl/teamlogos/KKR.png", LSG: "https://scores.iplt20.com/ipl/teamlogos/LSG.png", MI: "https://scores.iplt20.com/ipl/teamlogos/MI.png",
+        PBKS: "https://scores.iplt20.com/ipl/teamlogos/PBKS.png", RCB: "https://scores.iplt20.com/ipl/teamlogos/RCB.png", RR: "https://scores.iplt20.com/ipl/teamlogos/RR.png", SRH: "https://scores.iplt20.com/ipl/teamlogos/SRH.png"
+    };
+
+    let originalPtsData = [];
+    let originalNrrData = {};
+    let ptsData = [];
+    let nrrData = {};
+    let initialSortedTeams = null;
+    let lastEditedTeam = null;
+
+    function parseOvers(overString) {
+        if (!overString) return 0;
+        let parts = String(overString).split('.');
+        let fullOvers = parseInt(parts[0]) || 0;
+        let balls = parts.length > 1 ? parseInt(parts[1]) || 0 : 0;
+        return fullOvers + (balls / 6);
+    }
+    
+    function formatOvers(decimalOvers) {
+        if (isNaN(decimalOvers) || decimalOvers === 0) return "0.0";
+        let fullOvers = Math.floor(decimalOvers);
+        let balls = Math.round((decimalOvers - fullOvers) * 6);
+        if (balls === 6) { fullOvers += 1; balls = 0; }
+        return `${fullOvers}.${balls}`;
+    }
+    
+    function parseRuns(scoreStr) {
+        if (!scoreStr) return 0;
+        return parseInt(scoreStr.split('/')[0]) || 0;
+    }
+    
+    function calculateNRR(rs, of, rc, ob) {
+        if (of === 0 || ob === 0) return 0;
+        return (rs / of) - (rc / ob);
+    }
+
+    async function loadData() {
+        try {
+            const response = await fetch('data.json');
+            const data = await response.json();
+            
+            // Populate Original Points Data
+            originalPtsData = data.teams.map(team => {
+                let resolvedNR = team.NR !== undefined ? team.NR : 0;
+                return {
+                    ...team, 
+                    NR: resolvedNR,
+                    Pts: (team.W * 2) + resolvedNR
+                };
+            });
+
+            // Initialize Original NRR
+            Object.keys(teamLogos).forEach(team => { originalNrrData[team] = { runsScored: 0, oversFaced: 0, runsConceded: 0, oversBowled: 0 }; });
+
+            data.schedule.filter(m => m.isOfficial && m.completed).forEach(match => {
+                let homeR = parseRuns(match.homeScore), awayR = parseRuns(match.awayScore);
+                let homeOvStr = match.homeOvers, awayOvStr = match.awayOvers;
+
+                // Handle All Out logic
+                if (match.homeScore && (match.homeScore.includes("/10") || (!match.homeScore.includes("/") && parseFloat(homeOvStr) < 20))) { homeOvStr = "20.0"; }
+                if (match.awayScore && (match.awayScore.includes("/10") || (!match.awayScore.includes("/") && parseFloat(awayOvStr) < 20))) { awayOvStr = "20.0"; }
+
+                if(originalNrrData[match.home]) {
+                    originalNrrData[match.home].runsScored += homeR; originalNrrData[match.home].oversFaced += parseOvers(homeOvStr);
+                    originalNrrData[match.home].runsConceded += awayR; originalNrrData[match.home].oversBowled += parseOvers(awayOvStr);
+                }
+                if(originalNrrData[match.away]) {
+                    originalNrrData[match.away].runsScored += awayR; originalNrrData[match.away].oversFaced += parseOvers(awayOvStr);
+                    originalNrrData[match.away].runsConceded += homeR; originalNrrData[match.away].oversBowled += parseOvers(homeOvStr);
+                }
+            });
+
+            // Calculate precise NRR natively
+            originalPtsData.forEach(t => {
+                const nData = originalNrrData[t.name];
+                t.NRR = calculateNRR(nData.runsScored, nData.oversFaced, nData.runsConceded, nData.oversBowled);
+            });
+
+            // Calculate Initial Sorted Base for Delta Arrows
+            originalPtsData.sort((a, b) => b.Pts !== a.Pts ? b.Pts - a.Pts : b.NRR - a.NRR);
+            initialSortedTeams = originalPtsData.map(t => t.name);
+
+            resetAllData();
+        } catch (error) {
+            document.querySelector("#ptsTable tbody").innerHTML = `<tr><td colspan="9" class="nrr-negative">Unable to load data.json. Ensure server is running.</td></tr>`;
+            document.querySelector("#nrrTable tbody").innerHTML = `<tr><td colspan="8" class="nrr-negative">Unable to load data.json. Ensure server is running.</td></tr>`;
+        }
+    }
+
+    function resetAllData() {
+        ptsData = JSON.parse(JSON.stringify(originalPtsData));
+        nrrData = JSON.parse(JSON.stringify(originalNrrData));
+        lastEditedTeam = null;
+        renderNRRTable();
+        renderPtsTable();
+    }
+
+    function resetTeam(teamName) {
+        const origPt = originalPtsData.find(x => x.name === teamName);
+        const pt = ptsData.find(x => x.name === teamName);
+        
+        if(pt && origPt) { 
+            pt.P = origPt.P; 
+            pt.W = origPt.W; 
+            pt.L = origPt.L; 
+            pt.NR = origPt.NR;
+            pt.Pts = (pt.W * 2) + pt.NR; 
+            pt.NRR = origPt.NRR; 
+        }
+        
+        if(nrrData[teamName] && originalNrrData[teamName]) {
+            nrrData[teamName] = JSON.parse(JSON.stringify(originalNrrData[teamName]));
+        }
+        
+        lastEditedTeam = teamName;
+        renderNRRTable();
+        renderPtsTable();
+    }
+
+    // --- Points Table ---
+    function adjPts(teamName, key, delta) {
+        const t = ptsData.find(x => x.name === teamName);
+        if(key === 'P') {
+            t.P = Math.max(0, Math.min(14, t.P + delta));
+        } else {
+            t[key] = Math.max(0, t[key] + delta);
+        }
+        
+        t.Pts = (t.W * 2) + t.NR; // Auto Calculate Pts
+        lastEditedTeam = teamName; // Triggers highlight animation
+        renderPtsTable();
+    }
+
+    function renderPtsTable() {
+        const tbody = document.querySelector("#ptsTable tbody"); 
+        tbody.innerHTML = "";
+        
+        // Sync Live NRR to Points Table
+        ptsData.forEach(t => {
+            const nData = nrrData[t.name];
+            t.NRR = calculateNRR(nData.runsScored, nData.oversFaced, nData.runsConceded, nData.oversBowled);
+        });
+
+        // Re-sort table based on Auto-Calculated Pts and Live NRR
+        ptsData.sort((a, b) => b.Pts !== a.Pts ? b.Pts - a.Pts : b.NRR - a.NRR);
+
+        ptsData.forEach((team, index) => {
+            const originalIndex = initialSortedTeams.indexOf(team.name);
+            const posChange = originalIndex - index;
+            const positionDisplay = posChange !== 0 ? 
+                `<span class="position-change ${posChange > 0 ? 'position-up' : 'position-down'}"><span class="position-arrow">${posChange > 0 ? '▲' : '▼'}</span>${Math.abs(posChange)}</span>` : '';
+
+            const tr = document.createElement("tr");
+            
+            // Add flash animation class if recently edited
+            if (team.name === lastEditedTeam) {
+                tr.classList.add('highlight-flash');
+            }
+
+            tr.innerHTML = `
+                <td style="font-weight:700">${index + 1} ${positionDisplay}</td>
+                <td><div class="team-name"><img src="${teamLogos[team.name]}" class="team-logo" title="${team.name}"><span style="font-weight:600;">${team.name}</span></div></td>
+                <td><div class="stepper"><button class="step-btn" onclick="adjPts('${team.name}', 'P', -1)">-</button><span class="step-val">${team.P}</span><button class="step-btn" onclick="adjPts('${team.name}', 'P', 1)">+</button></div></td>
+                <td><div class="stepper"><button class="step-btn" onclick="adjPts('${team.name}', 'W', -1)">-</button><span class="step-val">${team.W}</span><button class="step-btn" onclick="adjPts('${team.name}', 'W', 1)">+</button></div></td>
+                <td><div class="stepper"><button class="step-btn" onclick="adjPts('${team.name}', 'L', -1)">-</button><span class="step-val">${team.L}</span><button class="step-btn" onclick="adjPts('${team.name}', 'L', 1)">+</button></div></td>
+                <td><div class="stepper"><button class="step-btn" onclick="adjPts('${team.name}', 'NR', -1)">-</button><span class="step-val">${team.NR}</span><button class="step-btn" onclick="adjPts('${team.name}', 'NR', 1)">+</button></div></td>
+                <td><span class="pts-val-badge">${team.Pts}</span></td>
+                <td class="nrr-result ${team.NRR > 0 ? 'nrr-positive' : team.NRR < 0 ? 'nrr-negative' : 'nrr-neutral'}">${team.NRR > 0 ? '+' : ''}${team.NRR.toFixed(3)}</td>
+                <td><button class="reset-btn-small" onclick="resetTeam('${team.name}')" title="Reset ${team.name}">↺</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // --- NRR Table ---
+    function updateLiveNRRPreview(teamName) {
+        const tr = document.getElementById(`nrr-row-${teamName}`);
+        let rScored = parseFloat(tr.querySelector('.adj-rs').value) || 0;
+        let oFacedStr = tr.querySelector('.adj-of').value || "0";
+        let rConceded = parseFloat(tr.querySelector('.adj-rc').value) || 0;
+        let oBowledStr = tr.querySelector('.adj-ob').value || "0";
+        
+        const data = nrrData[teamName];
+        let nrr = calculateNRR(data.runsScored + rScored, data.oversFaced + parseOvers(oFacedStr), data.runsConceded + rConceded, data.oversBowled + parseOvers(oBowledStr));
+        
+        const nrrCell = tr.querySelector('.nrr-result');
+        nrrCell.textContent = (nrr > 0 ? "+" : "") + nrr.toFixed(3);
+        nrrCell.className = `nrr-result ${nrr > 0 ? 'nrr-positive' : nrr < 0 ? 'nrr-negative' : 'nrr-neutral'}`;
+    }
+
+    function applyNRR(teamName) {
+        const data = nrrData[teamName];
+        const tr = document.getElementById(`nrr-row-${teamName}`);
+        
+        data.runsScored += parseFloat(tr.querySelector('.adj-rs').value) || 0;
+        data.oversFaced += parseOvers(tr.querySelector('.adj-of').value || "0");
+        data.runsConceded += parseFloat(tr.querySelector('.adj-rc').value) || 0;
+        data.oversBowled += parseOvers(tr.querySelector('.adj-ob').value || "0");
+        
+        lastEditedTeam = teamName;
+        renderNRRTable(); 
+        renderPtsTable();
+    }
+
+    function renderNRRTable() {
+        const tbody = document.querySelector("#nrrTable tbody"); 
+        tbody.innerHTML = "";
+        
+        Object.keys(teamLogos).sort().forEach(team => {
+            const data = nrrData[team];
+            const ofFmt = formatOvers(data.oversFaced), obFmt = formatOvers(data.oversBowled);
+            const nrr = calculateNRR(data.runsScored, data.oversFaced, data.runsConceded, data.oversBowled);
+            const nrrClass = nrr > 0 ? "nrr-positive" : nrr < 0 ? "nrr-negative" : "nrr-neutral";
+
+            const tr = document.createElement("tr"); 
+            tr.id = `nrr-row-${team}`;
+            tr.innerHTML = `
+                <td><div class="team-name"><img src="${teamLogos[team]}" class="team-logo" title="${team}"><span style="font-weight:600;">${team}</span></div></td>
+                <td><div class="nrr-cell"><span class="stat-main">${data.runsScored}</span><input type="number" class="adj-inp adj-rs" placeholder="+ runs" oninput="updateLiveNRRPreview('${team}')"></div></td>
+                <td><div class="nrr-cell"><span class="stat-main">${ofFmt}</span><input type="number" step="0.1" class="adj-inp adj-of" placeholder="+ ovs" oninput="updateLiveNRRPreview('${team}')"></div></td>
+                <td><div class="nrr-cell"><span class="stat-main">${data.runsConceded}</span><input type="number" class="adj-inp adj-rc" placeholder="+ runs" oninput="updateLiveNRRPreview('${team}')"></div></td>
+                <td><div class="nrr-cell"><span class="stat-main">${obFmt}</span><input type="number" step="0.1" class="adj-inp adj-ob" placeholder="+ ovs" oninput="updateLiveNRRPreview('${team}')"></div></td>
+                <td class="nrr-result ${nrrClass}">${nrr > 0 ? '+' : ''}${nrr.toFixed(3)}</td>
+                <td><button class="apply-btn" onclick="applyNRR('${team}')">Add</button></td>
+                <td><button class="reset-btn-small" onclick="resetTeam('${team}')" title="Reset ${team}">↺</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", loadData);
+</script>
+</body>
+</html>
