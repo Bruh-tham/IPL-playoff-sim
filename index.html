@@ -539,13 +539,13 @@
         { name: "LSG", P: 0, W: 0, L: 0, NR: 0, NRR: 0.000, top4Chance: 0, top2Chance: 0 },
         { name: "MI", P: 0, W: 0, L: 0, NR: 0, NRR: 0.000, top4Chance: 0, top2Chance: 0 },
         { name: "PBKS", P: 0, W: 0, L: 0, NR: 0, NRR: 0.000, top4Chance: 0, top2Chance: 0 },
-        { name: "RCB", P: 0, W: 0, L: 0, NR: 0, NRR: 0.000, top4Chance: 0, top2Chance: 0 },
+        { name: "RCB", P: 1, W: 1, L: 0, NR: 0, NRR: 2.907, top4Chance: 0, top2Chance: 0 },
         { name: "RR", P: 0, W: 0, L: 0, NR: 0, NRR: 0.000, top4Chance: 0, top2Chance: 0 },
-        { name: "SRH", P: 0, W: 0, L: 0, NR: 0, NRR: 0.000, top4Chance: 0, top2Chance: 0 }
+        { name: "SRH", P: 1, W: 0, L: 1, NR: 0, NRR: -2.907, top4Chance: 0, top2Chance: 0 }
     ].map(team => ({ ...team, Pts: (team.W * 2) + team.NR }));
 
     const initialSchedule = [
-        {num: 1, date:'28-03-2026', time:'7:30 PM', home:'RCB', away:'SRH', completed: false, selectedWinner: null},
+        {num: 1, date:'28-03-2026', time:'7:30 PM', home:'RCB', away:'SRH', completed: false, selectedWinner: RCB},
         {num: 2, date:'29-03-2026', time:'7:30 PM', home:'MI', away:'KKR', completed: false, selectedWinner: null},
         {num: 3, date:'30-03-2026', time:'7:30 PM', home:'RR', away:'CSK', completed: false, selectedWinner: null},
         {num: 4, date:'31-03-2026', time:'7:30 PM', home:'PBKS', away:'GT', completed: false, selectedWinner: null},
