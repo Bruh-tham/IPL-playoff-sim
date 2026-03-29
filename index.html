@@ -5,349 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IPL 2026 Playoffs Simulator</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏏</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Light Theme Variables */
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --success: #22c55e;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --background: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --tile-hover: rgba(37, 99, 235, 0.08);
-            --shadow: rgba(0, 0, 0, 0.1);
+            --primary: #2563eb; --primary-hover: #1d4ed8; --success: #22c55e; --danger: #ef4444; --warning: #f59e0b;
+            --background: #f8fafc; --card: #ffffff; --text: #1e293b; --text-muted: #64748b; --border: #e2e8f0;
+            --tile-hover: rgba(37, 99, 235, 0.08); --glow: rgba(37, 99, 235, 0.15); --shadow: rgba(0, 0, 0, 0.08);
         }
-
-        /* Dark Theme Variables */
         body.dark-theme {
-            --primary: #3b82f6;
-            --primary-hover: #60a5fa;
-            --success: #4ade80;
-            --danger: #f87171;
-            --warning: #fbbf24;
-            --background: #0f172a;
-            --card: #1e293b;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #334155;
-            --tile-hover: rgba(59, 130, 246, 0.15);
-            --shadow: rgba(0, 0, 0, 0.4);
+            --primary: #3b82f6; --primary-hover: #60a5fa; --success: #4ade80; --danger: #f87171; --warning: #fbbf24;
+            --background: #0f172a; --card: #1e293b; --text: #f8fafc; --text-muted: #94a3b8; --border: #334155;
+            --tile-hover: rgba(59, 130, 246, 0.12); --glow: rgba(59, 130, 246, 0.25); --shadow: rgba(0, 0, 0, 0.4);
         }
+        body { font-family: 'Inter', sans-serif; padding: 30px 40px; margin: 0 auto; background-color: var(--background); color: var(--text); line-height: 1.6; transition: background-color 0.3s, color 0.3s; max-width: 1400px; }
+        
+        .header-container { display: flex; justify-content: center; align-items: center; margin-bottom: 2rem; position: relative; }
+        h1 { font-family: 'Montserrat', sans-serif; font-size: 2.25rem; font-weight: 700; margin: 0; color: var(--primary); text-align: center; }
+        .top-controls { position: absolute; right: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+        
+        .theme-toggle-top { width: 42px; height: 42px; border: none; border-radius: 50%; background: var(--text); color: var(--background) !important; font-size: 1.15rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px var(--shadow); }
+        .theme-toggle-top:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .nav-link { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.85rem; color: var(--primary); text-decoration: none; background: var(--tile-hover); padding: 8px 14px; border-radius: 8px; transition: all 0.2s; border: 1px solid transparent; display: flex; align-items: center; gap: 6px; }
+        .nav-link:hover { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+        
+        body.dark-theme .nav-link { color: #60a5fa; }
+        body.dark-theme .nav-link:hover { color: #ffffff; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            padding: 30px 40px;
-            margin: 0 auto;
-            background-color: var(--background);
-            color: var(--text);
-            line-height: 1.6;
-            transition: background-color 0.3s, color 0.3s;
-            position: relative;
-            max-width: 1400px;
-        }
+        table { border-spacing: 0; border-radius: 12px; overflow: hidden; background: var(--card); box-shadow: 0 4px 6px -1px var(--shadow); width: 100%; max-width: 1050px; margin: 0 auto 2rem; font-size: 0.95rem; font-family: 'Poppins', sans-serif; text-align: center; }
+        th { background: var(--primary); color: white; font-weight: 600; padding: 1rem; }
+        td { padding: 1rem; border-bottom: 1px solid var(--border); font-weight: 500; }
+        .team-name { display: flex; align-items: center; gap: 1rem; width: max-content; margin: 0 auto; text-align: left; }
+        .team-logo { width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; }
+        
+        .simulator { max-width: 1100px; width: 100%; margin: 0 auto; padding: 10px 0; display: flex; flex-direction: column; align-items: center; font-family: 'Poppins', sans-serif; }
+        .schedule-header { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 2rem; width: 100%; }
+        .schedule-header h2 { color: var(--text); margin: 0; font-size: 1.75rem; text-align: center; }
+        .tabs { display: flex; background: var(--border); padding: 4px; border-radius: 10px; gap: 4px; }
+        .tab-btn { border: none; background: transparent; padding: 0.5rem 1.5rem; border-radius: 8px; font-family: 'Poppins', sans-serif; font-weight: 600; cursor: pointer; color: var(--text-muted); transition: all 0.2s ease; }
+        .tab-btn.active { background: var(--card); color: var(--primary); box-shadow: 0 2px 4px var(--shadow); }
+        .tab-btn:hover:not(.active) { color: var(--text); }
+        
+        .filter-header { text-align: center; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
+        .team-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-bottom: 2rem; width: 100%; }
+        .filter-btn { background: transparent; border: 2px solid transparent; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; padding: 4px; }
+        .filter-btn img { width: 100%; height: 100%; object-fit: contain; transition: all 0.3s ease; }
+        .filter-btn.active { border-color: var(--primary); background: var(--tile-hover); transform: scale(1.05); }
+        .filter-btn.dimmed img { opacity: 0.3; filter: grayscale(80%); }
 
-        .theme-toggle-top {
-            position: absolute;
-            top: 30px;
-            right: 40px;
-            width: 44px;
-            height: 44px;
-            border: none;
-            border-radius: 50%;
-            background: var(--text);
-            color: var(--background) !important;
-            font-size: 1.25rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
+        #matchList { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; width: 100%; }
+        .match-row { background: var(--card); border-radius: 16px; padding: 1.25rem 1.5rem; margin: 0; box-shadow: 0 4px 12px var(--shadow); width: 100%; max-width: 360px; box-sizing: border-box; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; }
+        .match-info { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; font-weight: 500; }
+        
+        .match-teams { display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin: 0.5rem 0; }
+        .team-tile { width: 100px; position: relative; cursor: pointer; padding: 0.75rem 0.5rem; border-radius: 12px; text-align: center; transition: all 0.2s ease; border: 2px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; background: transparent; }
+        .team-tile img { width: 64px; height: 64px; object-fit: contain; margin-bottom: 8px; flex-shrink: 0; transition: transform 0.2s ease; }
+        .team-abbr { font-weight: 600; font-size: 1.05rem; transition: color 0.2s; color: var(--text); }
+        .team-tile:not(.readonly):hover { background: var(--tile-hover); }
+        .team-tile.selected { background: transparent; border-color: var(--primary); box-shadow: 0 0 15px var(--glow), inset 0 0 0 1px var(--primary); }
+        .team-tile.selected img { transform: scale(1.05); }
+        .team-tile.selected .team-abbr { color: var(--primary); }
+        .vs-text { font-weight: 700; opacity: 0.3; font-size: 0.9rem; }
+        .team-tile.readonly { cursor: default; }
+        .match-nr { display: flex; justify-content: center; margin-top: 1.25rem; }
+        .match-nr button { font-family: 'Poppins', sans-serif; background: transparent; color: var(--text-muted); border: 2px solid var(--border); padding: 0.5rem 2rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+        .match-nr button.readonly { cursor: default; }
+        .match-nr button:not(.readonly):hover { background: var(--tile-hover); color: var(--text); }
+        .match-nr button.selected { background: transparent; color: var(--primary); border-color: var(--primary); box-shadow: 0 0 15px var(--glow); }
 
-        .theme-toggle-top:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-        }
+        .results-layout { display: flex; justify-content: space-between; align-items: center; margin: 0.5rem 0; padding: 0.5rem 0; }
+        .results-team { display: flex; flex-direction: column; align-items: center; width: 85px; opacity: 0.4; transition: opacity 0.3s ease; }
+        .results-team.winner { opacity: 1; }
+        .results-team img { width: 64px; height: 64px; object-fit: contain; margin-bottom: 6px; }
+        .results-team .team-abbr { font-weight: 700; font-size: 1.05rem; color: var(--text); }
+        .results-team.winner .team-abbr { color: var(--success); }
+        .results-score-center { display: flex; flex-direction: column; align-items: center; flex-grow: 1; padding: 0 10px; }
+        .score-main { display: flex; align-items: flex-start; gap: 12px; }
+        .score-detail { text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .score-detail .runs { font-size: 1.4rem; font-weight: 700; color: var(--text); line-height: 1.1; }
+        .score-detail .overs { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; margin-top: 4px; }
+        .score-detail .super-over { font-size: 0.95rem; color: var(--text); font-weight: 700; margin-top: 2px; opacity: 0.9; }
+        .score-divider { font-size: 1rem; font-weight: 600; color: var(--text-muted); opacity: 0.4; margin-top: 4px; }
+        .match-status-badge { font-size: 0.8rem; font-weight: 600; color: var(--primary); background: var(--tile-hover); padding: 6px 12px; border-radius: 8px; margin-top: 14px; text-align: center; line-height: 1.3; width: max-content; max-width: 100%; }
+        .empty-message { grid-column: 1 / -1; text-align: center; font-size: 1.1rem; font-weight: 500; color: var(--text-muted); padding: 3rem 1rem; background: var(--card); border-radius: 12px; box-shadow: 0 4px 8px var(--shadow); width: 100%; max-width: 400px; margin: 0 auto; }
 
-        h1 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-top: 0;
-            margin-bottom: 2rem;
-            color: var(--primary);
-            text-align: center;
-        }
-
-        h2 {
-            color: var(--text);
-            margin-bottom: 1.5rem;
-        }
-
-        table {
-            border-spacing: 0;
-            border-radius: 12px;
-            overflow: hidden;
-            background: var(--card);
-            box-shadow: 0 4px 6px -1px var(--shadow);
-            width: 100%;
-            max-width: 1100px;
-            margin: 0 auto 2rem;
-            font-size: 0.95rem;
-            font-family: 'Poppins', sans-serif;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
-
-        th {
-            background: var(--primary);
-            color: white;
-            font-weight: 600;
-            text-transform: uppercase;
-            padding: 1rem;
-        }
-
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            font-weight: 500;
-        }
-
-        /* Fixed alignment for team column */
-        .team-name {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            width: 100px; 
-            margin: 0 auto;
-            text-align: left;
-        }
-
-        .team-logo {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-            flex-shrink: 0;
-        }
-
-        .team-name span {
-            width: 50px; 
-        }
-
-        .simulator {
-            max-width: 1100px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        /* --- Team Filters --- */
-        .filter-header {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 1rem;
-        }
-
-        .team-filters {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            width: 100%;
-        }
-
-        .filter-btn {
-            background: transparent;
-            border: 2px solid transparent;
-            border-radius: 50%;
-            width: 55px;
-            height: 55px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            padding: 4px;
-        }
-
-        .filter-btn img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            transition: all 0.3s ease;
-        }
-
-        .filter-btn.active {
-            border-color: var(--primary);
-            background: var(--tile-hover);
-            transform: scale(1.05);
-        }
-
-        .filter-btn.dimmed img {
-            opacity: 0.3;
-            filter: grayscale(80%);
-        }
-
-        .filter-btn:hover:not(.active) img {
-            opacity: 0.7;
-            filter: grayscale(40%);
-        }
-
-        /* --- Schedule Grid --- */
-        #matchList {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            width: 100%;
-        }
-
-        .match-row {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin: 0;
-            box-shadow: 0 4px 8px var(--shadow);
-            width: 100%;
-            box-sizing: border-box;
-            transition: all 0.2s;
-        }
-
-        .match-info {
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        .match-teams {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin: 1rem 0;
-        }
-
-        .team-tile {
-            width: 120px;
-            position: relative;
-            cursor: pointer;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            transition: all 0.2s;
-            border: 2px solid var(--border);
-        }
-
-        .team-tile span {
-            font-weight: 500;
-            display: block;
-        }
-
-        .team-tile:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px var(--shadow);
-        }
-
-        .team-tile.selected {
-            background: var(--tile-hover);
-            border-color: var(--primary);
-            color: var(--primary);
-            transform: scale(0.98);
-            box-shadow: inset 0 0 0 1.5px var(--primary);
-        }
-
-        .team-tile img {
-            width: 48px;
-            height: 48px;
-            object-fit: contain;
-            margin: 0 auto 8px;
-            display: block;
-        }
-
-        .match-nr {
-            display: flex;
-            justify-content: center;
-            margin-top: 1.5rem;
-        }
-
-        .match-nr button {
-            font-family: 'Poppins', sans-serif;
-            background: transparent;
-            color: var(--text);
-            border: 2px solid var(--border);
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            min-width: 140px;
-        }
-
-        .match-nr button:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        .match-nr button.selected {
-            background: var(--tile-hover);
-            color: var(--primary);
-            border-color: var(--primary);
-            transform: scale(0.98);
-        }
-
-        .action-buttons {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            display: flex;
-            gap: 1rem;
-            z-index: 100;
-        }
-
-        .action-buttons button {
-            width: 44px;
-            height: 44px;
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-size: 1.25rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
+        .action-buttons { position: fixed; bottom: 2rem; right: 2rem; display: flex; gap: 1rem; z-index: 100; }
+        .action-buttons button { width: 44px; height: 44px; border: none; border-radius: 50%; color: white; font-size: 1.25rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
         .btn-top { background: var(--success); }
         .btn-reset { background: var(--danger); }
-
-        .action-buttons button:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-        }
-
+        .action-buttons button:hover { transform: translateY(-2px); filter: brightness(1.1); }
         .chance-high { color: var(--success); font-weight: 600; }
         .chance-medium { color: var(--warning); font-weight: 600; }
         .chance-low { color: var(--danger); font-weight: 600; }
-
         .change-indicator { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
         .change-pts { font-weight: 600; font-size: 0.9rem; }
         .change-pts.positive { color: var(--success); }
@@ -358,104 +106,26 @@
         .change-pct.down { color: var(--danger); }
         .change-pct.same { color: var(--text-muted); }
 
-        /* --- Updated Footer --- */
-        .footer {
-            text-align: center;
-            padding: 1.25rem;
-            margin: 2rem auto 0;
-            font-family: 'Inter', sans-serif;
-            color: var(--text-muted);
-            background-color: var(--card);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px var(--shadow);
-            font-size: 0.95rem;
-            max-width: 1100px;
+        @media (max-width: 950px) {
+            .header-container { flex-direction: column; align-items: center; gap: 15px; text-align: center; }
+            .top-controls { position: relative; flex-direction: row; justify-content: center; }
         }
-
-        .footer a {
-            color: inherit;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .footer a:hover { color: var(--primary); }
-        .footer svg { width: 16px; height: 16px; }
-        .heart { color: var(--danger); display: inline-block; margin: 0 0.25rem; }
-        .position-change { display: inline-flex; align-items: center; gap: 0.5rem; }
-        .position-up { color: var(--success); }
-        .position-down { color: var(--danger); }
-
-        /* --- Media Queries --- */
-        @media (max-width: 1200px) { 
-            body { padding: 30px; } 
-        }
-        
-        /* Mobile Landscape Specific Tuning */
-        @media (max-width: 950px) and (orientation: landscape) {
-            body { padding: 15px 25px; }
-            h1 { font-size: 1.8rem; margin-bottom: 1rem; padding-right: 50px; }
-            .theme-toggle-top { top: 15px; right: 25px; width: 38px; height: 38px; font-size: 1rem; }
-            .filter-header { margin-bottom: 0.5rem; }
-            .team-filters { margin-bottom: 1rem; gap: 0.5rem; }
-            .filter-btn { width: 42px; height: 42px; padding: 2px; }
-            #matchList { gap: 1rem; }
-            
-            /* Squish the match cards vertically */
-            .match-row { padding: 0.75rem 1rem; }
-            .match-info { margin-bottom: 0.5rem; font-size: 0.8rem; }
-            .match-teams { margin: 0.5rem 0; gap: 1rem; }
-            .team-tile { width: 95px; padding: 0.5rem; }
-            .team-tile img { width: 32px; height: 32px; margin-bottom: 4px; }
-            .team-tile span { font-size: 0.9rem; }
-            .match-nr { margin-top: 0.5rem; }
-            .match-nr button { padding: 0.5rem 1.25rem; font-size: 0.85rem; min-width: 110px; }
-            
-            .action-buttons { bottom: 1rem; right: 1rem; }
-            .action-buttons button { width: 38px; height: 38px; font-size: 1rem; }
-        }
-
-        @media (max-width: 900px) and (orientation: portrait) {
-            .theme-toggle-top { top: 20px; right: 20px; width: 36px; height: 36px; font-size: 1rem; }
-            h1 { font-size: 2rem; margin-top: 10px; padding-right: 40px; } 
-        }
-
         @media (max-width: 768px) {
             body { padding: 20px 15px; }
             table { font-size: 0.85rem; display: block; overflow-x: auto; white-space: nowrap; }
-            th, td { padding: 0.75rem; }
-            .team-logo { width: 24px; height: 24px; }
-            .team-name { width: 85px; gap: 0.5rem; } 
-            .team-filters { gap: 0.5rem; }
-            .filter-btn { width: 45px; height: 45px; }
-            
-            /* Tighter elements for standard mobile portrait */
-            .match-row { padding: 1rem; }
-            .match-teams { gap: 1rem; }
-            .team-tile { width: 90px; padding: 0.75rem; }
-            .team-tile img { width: 30px; height: 30px; }
-            .team-tile span { font-size: 0.85rem; }
-            .match-info { font-size: 0.85rem; }
-            .match-nr button { padding: 0.6rem 1.5rem; font-size: 0.9rem; }
-            
-            .action-buttons { bottom: 1.5rem; right: 1.5rem; }
-        }
-        
-        @media (max-width: 650px) {
-            /* Snaps to 1 column ONLY on small portrait phones */
-            #matchList { grid-template-columns: 1fr; }
-            h1 { font-size: 1.75rem; }
+            .match-row { padding: 1.25rem 1rem; max-width: 100%; }
         }
     </style>
 </head>
 <body>
 
-<button class="theme-toggle-top" onclick="toggleTheme()" title="Toggle Dark Mode">🌓</button>
-
-<h1>IPL 2026 Playoffs Simulator</h1>
+<div class="header-container">
+    <h1>IPL 2026 Playoffs Simulator</h1>
+    <div class="top-controls">
+        <button class="theme-toggle-top" onclick="toggleTheme()" title="Toggle Dark Mode">🌓</button>
+        <a href="nrr.html" class="nav-link">Advanced Editor <span>➔</span></a>
+    </div>
+</div>
 
 <table id="pointsTable">
     <thead>
@@ -477,21 +147,17 @@
 </table>
 
 <div class="simulator">
-    <h2>Remaining Schedule</h2>
+    <div class="schedule-header">
+        <h2 id="scheduleHeading">Fixtures</h2>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="setTab('fixtures')" id="tabFixtures">Fixtures</button>
+            <button class="tab-btn" onclick="setTab('results')" id="tabResults">Results</button>
+        </div>
+    </div>
     <div class="filter-header">- Filter Matches By Team -</div>
     <div class="team-filters" id="teamFilters"></div>
     <div id="matchList"></div>
 </div>
-
-<footer class="footer">
-    Made with <span class="heart">♥</span> by 
-    <a href="https://twitter.com/Prathamjc18" target="_blank">
-        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
-        </svg>
-        @Prathamjc18
-    </a>
-</footer>
 
 <div class="action-buttons">
     <button class="btn-top" onclick="window.scrollTo(0,0)" title="Go to top">↑</button>
@@ -499,202 +165,87 @@
 </div>
 
 <script>
-    // --- Theme Management ---
     function initTheme() {
-        const savedTheme = localStorage.getItem('ipl-simulator-theme');
-        if (savedTheme === 'dark') {
-            document.body.classList.add('dark-theme');
-        } else if (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        if (localStorage.getItem('ipl-simulator-theme') === 'dark' || (!localStorage.getItem('ipl-simulator-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.body.classList.add('dark-theme');
         }
     }
-
     function toggleTheme() {
         document.body.classList.toggle('dark-theme');
-        const isDark = document.body.classList.contains('dark-theme');
-        localStorage.setItem('ipl-simulator-theme', isDark ? 'dark' : 'light');
+        localStorage.setItem('ipl-simulator-theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
     }
-
     initTheme();
 
-    // --- Data Definitions ---
     const teamLogos = {
-        CSK: "https://scores.iplt20.com/ipl/teamlogos/CSK.png",
-        DC: "https://scores.iplt20.com/ipl/teamlogos/DC.png",
-        GT: "https://scores.iplt20.com/ipl/teamlogos/GT.png",
-        KKR: "https://scores.iplt20.com/ipl/teamlogos/KKR.png",
-        LSG: "https://scores.iplt20.com/ipl/teamlogos/LSG.png",
-        MI: "https://scores.iplt20.com/ipl/teamlogos/MI.png",
-        PBKS: "https://scores.iplt20.com/ipl/teamlogos/PBKS.png",
-        RCB: "https://scores.iplt20.com/ipl/teamlogos/RCB.png",
-        RR: "https://scores.iplt20.com/ipl/teamlogos/RR.png",
-        SRH: "https://scores.iplt20.com/ipl/teamlogos/SRH.png"
+        CSK: "https://scores.iplt20.com/ipl/teamlogos/CSK.png", DC: "https://scores.iplt20.com/ipl/teamlogos/DC.png", GT: "https://scores.iplt20.com/ipl/teamlogos/GT.png",
+        KKR: "https://scores.iplt20.com/ipl/teamlogos/KKR.png", LSG: "https://scores.iplt20.com/ipl/teamlogos/LSG.png", MI: "https://scores.iplt20.com/ipl/teamlogos/MI.png",
+        PBKS: "https://scores.iplt20.com/ipl/teamlogos/PBKS.png", RCB: "https://scores.iplt20.com/ipl/teamlogos/RCB.png", RR: "https://scores.iplt20.com/ipl/teamlogos/RR.png", SRH: "https://scores.iplt20.com/ipl/teamlogos/SRH.png"
     };
 
-    const initialTeams = [
-        { name: "CSK", P: 0, W: 0, L: 0, NR: 0, NRR: 0.000, top4Chance: 0, top2Chance: 0 },
-        { name: "DC", P: 0, W: 0, L: 0, NR: 0, NRR: 0.000, top4Chance: 0, top2Chance: 0 },
-        { name: "GT", P: 0, W: 0, L: 0, NR: 0, NRR: 0.000, top4Chance: 0, top2Chance: 0 },
-        { name: "KKR", P: 0, W: 0, L: 0, NR: 0, NRR: 0.000, top4Chance: 0, top2Chance: 0 },
-        { name: "LSG", P: 0, W: 0, L: 0, NR: 0, NRR: 0.000, top4Chance: 0, top2Chance: 0 },
-        { name: "MI", P: 0, W: 0, L: 0, NR: 0, NRR: 0.000, top4Chance: 0, top2Chance: 0 },
-        { name: "PBKS", P: 0, W: 0, L: 0, NR: 0, NRR: 0.000, top4Chance: 0, top2Chance: 0 },
-        { name: "RCB", P: 1, W: 1, L: 0, NR: 0, NRR: 2.907, top4Chance: 0, top2Chance: 0 },
-        { name: "RR", P: 0, W: 0, L: 0, NR: 0, NRR: 0.000, top4Chance: 0, top2Chance: 0 },
-        { name: "SRH", P: 1, W: 0, L: 1, NR: 0, NRR: -2.907, top4Chance: 0, top2Chance: 0 }
-    ].map(team => ({ ...team, Pts: (team.W * 2) + team.NR }));
+    let initialTeams = [], initialSchedule = [], teams = [], schedule = [];
+    let initialSortedTeams = null, activeFilters = new Set(), currentTab = 'fixtures';
 
-    const initialSchedule = [
-        {num: 1, date:'28-03-2026', time:'7:30 PM', home:'RCB', away:'SRH', completed: true, selectedWinner: 'RCB'},
-        {num: 2, date:'29-03-2026', time:'7:30 PM', home:'MI', away:'KKR', completed: false, selectedWinner: null},
-        {num: 3, date:'30-03-2026', time:'7:30 PM', home:'RR', away:'CSK', completed: false, selectedWinner: null},
-        {num: 4, date:'31-03-2026', time:'7:30 PM', home:'PBKS', away:'GT', completed: false, selectedWinner: null},
-        {num: 5, date:'01-04-2026', time:'7:30 PM', home:'LSG', away:'DC', completed: false, selectedWinner: null},
-        {num: 6, date:'02-04-2026', time:'7:30 PM', home:'KKR', away:'SRH', completed: false, selectedWinner: null},
-        {num: 7, date:'03-04-2026', time:'7:30 PM', home:'CSK', away:'PBKS', completed: false, selectedWinner: null},
-        {num: 8, date:'04-04-2026', time:'3:30 PM', home:'DC', away:'MI', completed: false, selectedWinner: null},
-        {num: 9, date:'04-04-2026', time:'7:30 PM', home:'GT', away:'RR', completed: false, selectedWinner: null},
-        {num: 10, date:'05-04-2026', time:'3:30 PM', home:'SRH', away:'LSG', completed: false, selectedWinner: null},
-        {num: 11, date:'05-04-2026', time:'7:30 PM', home:'RCB', away:'CSK', completed: false, selectedWinner: null},
-        {num: 12, date:'06-04-2026', time:'7:30 PM', home:'KKR', away:'PBKS', completed: false, selectedWinner: null},
-        {num: 13, date:'07-04-2026', time:'7:30 PM', home:'RR', away:'MI', completed: false, selectedWinner: null},
-        {num: 14, date:'08-04-2026', time:'7:30 PM', home:'DC', away:'GT', completed: false, selectedWinner: null},
-        {num: 15, date:'09-04-2026', time:'7:30 PM', home:'KKR', away:'LSG', completed: false, selectedWinner: null},
-        {num: 16, date:'10-04-2026', time:'7:30 PM', home:'RR', away:'RCB', completed: false, selectedWinner: null},
-        {num: 17, date:'11-04-2026', time:'3:30 PM', home:'PBKS', away:'SRH', completed: false, selectedWinner: null},
-        {num: 18, date:'11-04-2026', time:'7:30 PM', home:'CSK', away:'DC', completed: false, selectedWinner: null},
-        {num: 19, date:'12-04-2026', time:'3:30 PM', home:'LSG', away:'GT', completed: false, selectedWinner: null},
-        {num: 20, date:'12-04-2026', time:'7:30 PM', home:'MI', away:'RCB', completed: false, selectedWinner: null},
-        {num: 21, date:'13-04-2026', time:'7:30 PM', home:'SRH', away:'RR', completed: false, selectedWinner: null},
-        {num: 22, date:'14-04-2026', time:'7:30 PM', home:'CSK', away:'KKR', completed: false, selectedWinner: null},
-        {num: 23, date:'15-04-2026', time:'7:30 PM', home:'RCB', away:'LSG', completed: false, selectedWinner: null},
-        {num: 24, date:'16-04-2026', time:'7:30 PM', home:'MI', away:'PBKS', completed: false, selectedWinner: null},
-        {num: 25, date:'17-04-2026', time:'7:30 PM', home:'GT', away:'KKR', completed: false, selectedWinner: null},
-        {num: 26, date:'18-04-2026', time:'3:30 PM', home:'RCB', away:'DC', completed: false, selectedWinner: null},
-        {num: 27, date:'18-04-2026', time:'7:30 PM', home:'SRH', away:'CSK', completed: false, selectedWinner: null},
-        {num: 28, date:'19-04-2026', time:'3:30 PM', home:'KKR', away:'RR', completed: false, selectedWinner: null},
-        {num: 29, date:'19-04-2026', time:'7:30 PM', home:'PBKS', away:'LSG', completed: false, selectedWinner: null},
-        {num: 30, date:'20-04-2026', time:'7:30 PM', home:'GT', away:'MI', completed: false, selectedWinner: null},
-        {num: 31, date:'21-04-2026', time:'7:30 PM', home:'SRH', away:'DC', completed: false, selectedWinner: null},
-        {num: 32, date:'22-04-2026', time:'7:30 PM', home:'LSG', away:'RR', completed: false, selectedWinner: null},
-        {num: 33, date:'23-04-2026', time:'7:30 PM', home:'MI', away:'CSK', completed: false, selectedWinner: null},
-        {num: 34, date:'24-04-2026', time:'7:30 PM', home:'RCB', away:'GT', completed: false, selectedWinner: null},
-        {num: 35, date:'25-04-2026', time:'3:30 PM', home:'DC', away:'PBKS', completed: false, selectedWinner: null},
-        {num: 36, date:'25-04-2026', time:'7:30 PM', home:'RR', away:'SRH', completed: false, selectedWinner: null},
-        {num: 37, date:'26-04-2026', time:'3:30 PM', home:'GT', away:'CSK', completed: false, selectedWinner: null},
-        {num: 38, date:'26-04-2026', time:'7:30 PM', home:'LSG', away:'KKR', completed: false, selectedWinner: null},
-        {num: 39, date:'27-04-2026', time:'7:30 PM', home:'DC', away:'RCB', completed: false, selectedWinner: null},
-        {num: 40, date:'28-04-2026', time:'7:30 PM', home:'PBKS', away:'RR', completed: false, selectedWinner: null},
-        {num: 41, date:'29-04-2026', time:'7:30 PM', home:'MI', away:'SRH', completed: false, selectedWinner: null},
-        {num: 42, date:'30-04-2026', time:'7:30 PM', home:'GT', away:'RCB', completed: false, selectedWinner: null},
-        {num: 43, date:'01-05-2026', time:'7:30 PM', home:'RR', away:'DC', completed: false, selectedWinner: null},
-        {num: 44, date:'02-05-2026', time:'7:30 PM', home:'CSK', away:'MI', completed: false, selectedWinner: null},
-        {num: 45, date:'03-05-2026', time:'3:30 PM', home:'SRH', away:'KKR', completed: false, selectedWinner: null},
-        {num: 46, date:'03-05-2026', time:'7:30 PM', home:'GT', away:'PBKS', completed: false, selectedWinner: null},
-        {num: 47, date:'04-05-2026', time:'7:30 PM', home:'MI', away:'LSG', completed: false, selectedWinner: null},
-        {num: 48, date:'05-05-2026', time:'7:30 PM', home:'DC', away:'CSK', completed: false, selectedWinner: null},
-        {num: 49, date:'06-05-2026', time:'7:30 PM', home:'SRH', away:'PBKS', completed: false, selectedWinner: null},
-        {num: 50, date:'07-05-2026', time:'7:30 PM', home:'LSG', away:'RCB', completed: false, selectedWinner: null},
-        {num: 51, date:'08-05-2026', time:'7:30 PM', home:'DC', away:'KKR', completed: false, selectedWinner: null},
-        {num: 52, date:'09-05-2026', time:'7:30 PM', home:'RR', away:'GT', completed: false, selectedWinner: null},
-        {num: 53, date:'10-05-2026', time:'3:30 PM', home:'CSK', away:'LSG', completed: false, selectedWinner: null},
-        {num: 54, date:'10-05-2026', time:'7:30 PM', home:'RCB', away:'MI', completed: false, selectedWinner: null},
-        {num: 55, date:'11-05-2026', time:'7:30 PM', home:'PBKS', away:'DC', completed: false, selectedWinner: null},
-        {num: 56, date:'12-05-2026', time:'7:30 PM', home:'GT', away:'SRH', completed: false, selectedWinner: null},
-        {num: 57, date:'13-05-2026', time:'7:30 PM', home:'RCB', away:'KKR', completed: false, selectedWinner: null},
-        {num: 58, date:'14-05-2026', time:'7:30 PM', home:'PBKS', away:'MI', completed: false, selectedWinner: null},
-        {num: 59, date:'15-05-2026', time:'7:30 PM', home:'LSG', away:'CSK', completed: false, selectedWinner: null},
-        {num: 60, date:'16-05-2026', time:'7:30 PM', home:'KKR', away:'GT', completed: false, selectedWinner: null},
-        {num: 61, date:'17-05-2026', time:'3:30 PM', home:'PBKS', away:'RCB', completed: false, selectedWinner: null},
-        {num: 62, date:'17-05-2026', time:'7:30 PM', home:'DC', away:'RR', completed: false, selectedWinner: null},
-        {num: 63, date:'18-05-2026', time:'7:30 PM', home:'CSK', away:'SRH', completed: false, selectedWinner: null},
-        {num: 64, date:'19-05-2026', time:'7:30 PM', home:'RR', away:'LSG', completed: false, selectedWinner: null},
-        {num: 65, date:'20-05-2026', time:'7:30 PM', home:'KKR', away:'MI', completed: false, selectedWinner: null},
-        {num: 66, date:'21-05-2026', time:'7:30 PM', home:'CSK', away:'GT', completed: false, selectedWinner: null},
-        {num: 67, date:'22-05-2026', time:'7:30 PM', home:'SRH', away:'RCB', completed: false, selectedWinner: null},
-        {num: 68, date:'23-05-2026', time:'7:30 PM', home:'LSG', away:'PBKS', completed: false, selectedWinner: null},
-        {num: 69, date:'24-05-2026', time:'3:30 PM', home:'MI', away:'RR', completed: false, selectedWinner: null},
-        {num: 70, date:'24-05-2026', time:'7:30 PM', home:'KKR', away:'DC', completed: false, selectedWinner: null}
-    ];
+    async function loadData() {
+        try {
+            const response = await fetch('data.json');
+            const data = await response.json();
+            initialTeams = data.teams.map(team => ({ ...team, Pts: (team.W * 2) + team.NR }));
+            initialSchedule = data.schedule;
+            teams = JSON.parse(JSON.stringify(initialTeams));
+            schedule = JSON.parse(JSON.stringify(initialSchedule));
+            simulateMonteCarlo();
+            initialTeams.forEach(team => {
+                const simTeam = teams.find(t => t.name === team.name);
+                team.originalTop4 = parseFloat(simTeam.top4Chance) || 0;
+                team.originalTop2 = parseFloat(simTeam.top2Chance) || 0;
+            });
+            renderFilters(); renderTable(); renderSchedule();
+        } catch (error) {
+            document.getElementById('matchList').innerHTML = `<div class="empty-message">Error loading data.json. Ensure local server is running.</div>`;
+        }
+    }
 
-    let teams = JSON.parse(JSON.stringify(initialTeams));
-    let schedule = JSON.parse(JSON.stringify(initialSchedule));
-    let initialSortedTeams = null;
-    let activeFilters = new Set(); 
-
-    // --- Core Logic ---
+    function setTab(tab) {
+        currentTab = tab;
+        document.getElementById('tabFixtures').classList.toggle('active', tab === 'fixtures');
+        document.getElementById('tabResults').classList.toggle('active', tab === 'results');
+        document.getElementById('scheduleHeading').innerText = tab === 'fixtures' ? 'Fixtures' : 'Results';
+        renderSchedule();
+    }
 
     function recalculateStandings() {
         teams = JSON.parse(JSON.stringify(initialTeams));
-        let teamMap = {};
-        teams.forEach(t => teamMap[t.name] = t);
-
+        let teamMap = {}; teams.forEach(t => teamMap[t.name] = t);
         schedule.forEach(match => {
-            if (match.completed && match.selectedWinner) {
-                const t1 = teamMap[match.home];
-                const t2 = teamMap[match.away];
-                
-                t1.P++;
-                t2.P++;
-                
-                if (match.selectedWinner === "NR") {
-                    t1.NR++;
-                    t2.NR++;
-                    t1.Pts += 1;
-                    t2.Pts += 1;
-                } else if (match.selectedWinner === t1.name) {
-                    t1.W++;
-                    t1.Pts += 2;
-                    t2.L++;
-                } else if (match.selectedWinner === t2.name) {
-                    t2.W++;
-                    t2.Pts += 2;
-                    t1.L++;
-                }
+            if (match.completed && match.selectedWinner && !match.isOfficial) {
+                const t1 = teamMap[match.home], t2 = teamMap[match.away];
+                t1.P++; t2.P++;
+                if (match.selectedWinner === "NR") { t1.NR++; t2.NR++; t1.Pts++; t2.Pts++; }
+                else if (match.selectedWinner === t1.name) { t1.W++; t1.Pts+=2; t2.L++; }
+                else { t2.W++; t2.Pts+=2; t1.L++; }
             }
         });
-        
         teams = Object.values(teamMap);
     }
 
     function simulateMonteCarlo(numSimulations = 10000) {
-        const top4Count = {};
-        const top2Count = {};
-        
-        teams.forEach(t => {
-            top4Count[t.name] = 0;
-            top2Count[t.name] = 0;
-        });
-
+        const top4Count = {}, top2Count = {};
+        teams.forEach(t => { top4Count[t.name] = 0; top2Count[t.name] = 0; });
         const remainingMatches = schedule.filter(m => !m.completed);
         const baseTeamsArray = teams.map(t => ({ name: t.name, Pts: t.Pts, NRR: t.NRR }));
-
         for (let sim = 0; sim < numSimulations; sim++) {
-            let simTeams = baseTeamsArray.map(t => ({...t}));
-            let teamMap = {};
+            let simTeams = baseTeamsArray.map(t => ({...t})), teamMap = {};
             simTeams.forEach(t => teamMap[t.name] = t);
-
             for (let i = 0; i < remainingMatches.length; i++) {
-                const match = remainingMatches[i];
-                const random = Math.random();
-                
-                if (random < 0.49) {
-                    teamMap[match.home].Pts += 2;
-                } else if (random < 0.98) {
-                    teamMap[match.away].Pts += 2;
-                } else {
-                    teamMap[match.home].Pts += 1;
-                    teamMap[match.away].Pts += 1;
-                }
+                const match = remainingMatches[i], random = Math.random();
+                if (random < 0.49) teamMap[match.home].Pts += 2;
+                else if (random < 0.98) teamMap[match.away].Pts += 2;
+                else { teamMap[match.home].Pts += 1; teamMap[match.away].Pts += 1; }
             }
-
             simTeams.sort((a, b) => {
                 if (b.Pts !== a.Pts) return b.Pts - a.Pts;
-                const simNrrA = a.NRR + (Math.random() * 0.4 - 0.2); 
-                const simNrrB = b.NRR + (Math.random() * 0.4 - 0.2);
-                return simNrrB - simNrrA;
+                return (b.NRR + (Math.random()*0.4-0.2)) - (a.NRR + (Math.random()*0.4-0.2));
             });
-
             for(let i=0; i<4; i++) {
                 if(simTeams[i]) {
                     top4Count[simTeams[i].name]++;
@@ -702,7 +253,6 @@
                 }
             }
         }
-
         teams.forEach(team => {
             team.top4Chance = ((top4Count[team.name] / numSimulations) * 100).toFixed(2);
             team.top2Chance = ((top2Count[team.name] / numSimulations) * 100).toFixed(2);
@@ -710,53 +260,29 @@
     }
 
     function handleButtonClick(index, winner) {
-        const fixture = schedule[index];
-        
-        if (fixture.selectedWinner === winner) {
-            fixture.selectedWinner = null;
-            fixture.completed = false;
-        } else {
-            fixture.selectedWinner = winner;
-            fixture.completed = true;
-        }
-
-        recalculateStandings();
-        simulateMonteCarlo();
-        renderTable();
-        renderSchedule();
+        if (schedule[index].isOfficial) return; 
+        schedule[index].completed = (schedule[index].selectedWinner !== winner);
+        schedule[index].selectedWinner = schedule[index].completed ? winner : null;
+        recalculateStandings(); simulateMonteCarlo(); renderTable(); renderSchedule();
     }
 
     function resetData() {
         schedule = JSON.parse(JSON.stringify(initialSchedule));
-        activeFilters.clear();
-        recalculateStandings();
-        simulateMonteCarlo();
-        renderFilters();
-        renderTable();
-        renderSchedule();
+        activeFilters.clear(); setTab('fixtures'); 
+        recalculateStandings(); simulateMonteCarlo(); renderFilters(); renderTable(); renderSchedule();
     }
 
     function toggleFilter(teamName) {
-        if (activeFilters.has(teamName)) {
-            activeFilters.delete(teamName);
-        } else {
-            activeFilters.add(teamName);
-        }
-        renderFilters();
-        renderSchedule();
+        activeFilters.has(teamName) ? activeFilters.delete(teamName) : activeFilters.add(teamName);
+        renderFilters(); renderSchedule();
     }
 
-    // --- Rendering ---
-
     function renderFilters() {
-        const container = document.getElementById("teamFilters");
-        container.innerHTML = "";
-        
+        const container = document.getElementById("teamFilters"); container.innerHTML = "";
         Object.keys(teamLogos).forEach(team => {
             const btn = document.createElement("button");
             const isActive = activeFilters.size === 0 || activeFilters.has(team);
             btn.className = `filter-btn ${isActive ? 'active' : 'dimmed'}`;
-            btn.title = `Filter matches for ${team}`;
             btn.onclick = () => toggleFilter(team);
             btn.innerHTML = `<img src="${teamLogos[team]}" alt="${team}">`;
             container.appendChild(btn);
@@ -764,121 +290,99 @@
     }
 
     function renderTable() {
-        const tableBody = document.querySelector("#pointsTable tbody");
-        tableBody.innerHTML = "";
-        
-        const sortedTeams = [...teams].sort((a, b) => {
-            if (b.Pts !== a.Pts) return b.Pts - a.Pts;
-            return b.NRR - a.NRR;
-        });
-
-        if (!initialSortedTeams) {
-            initialSortedTeams = sortedTeams.map(team => team.name);
-        }
+        const tableBody = document.querySelector("#pointsTable tbody"); tableBody.innerHTML = "";
+        const sortedTeams = [...teams].sort((a, b) => b.Pts !== a.Pts ? b.Pts - a.Pts : b.NRR - a.NRR);
+        if (!initialSortedTeams) initialSortedTeams = sortedTeams.map(t => t.name);
 
         sortedTeams.forEach((team, index) => {
             const originalIndex = initialSortedTeams.indexOf(team.name);
-            const positionChange = originalIndex - index;
-            const positionDisplay = positionChange !== 0 ? 
-                `<span class="position-change ${positionChange > 0 ? 'position-up' : 'position-down'}">
-                    <span class="position-arrow">${positionChange > 0 ? '▲' : '▼'}</span>${Math.abs(positionChange)}
-                </span>` : '';
-
+            const posChange = originalIndex - index;
             const originalTeam = initialTeams.find(t => t.name === team.name);
             const pointsGained = team.Pts - originalTeam.Pts;
             const pctChange = (parseFloat(team.top4Chance) - (originalTeam.originalTop4 || 0)).toFixed(2);
 
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${index + 1} ${positionDisplay}</td>
-                <td>
-                    <div class="team-name">
-                        <img src="${teamLogos[team.name]}" alt="${team.name}" class="team-logo">
-                        <span>${team.name}</span>
-                    </div>
-                </td>
-                <td>${team.P}</td>
-                <td>${team.W}</td>
-                <td>${team.L}</td>
-                <td>${team.NR}</td>
-                <td>${team.NRR > 0 ? '+' : ''}${team.NRR.toFixed(3)}</td>
-                <td>${team.Pts}</td>
-                <td class="${getChanceClass(team.top4Chance)}">${team.top4Chance}%</td>
-                <td class="${getChanceClass(team.top2Chance)}">${team.top2Chance}%</td>
-                <td>
-                    <div class="change-indicator">
-                        <span class="change-pts ${pointsGained > 0 ? 'positive' : pointsGained < 0 ? 'negative' : 'neutral'}">
-                            ${pointsGained > 0 ? '+' : ''}${pointsGained}
-                        </span>
-                        <span class="change-pct ${pctChange > 0 ? 'up' : pctChange < 0 ? 'down' : 'same'}">
-                            ${Math.abs(pctChange)}%
-                            <span class="arrow">${pctChange > 0 ? '▲' : pctChange < 0 ? '▼' : ''}</span>
-                        </span>
-                    </div>
-                </td>
+                <td>${index + 1} ${posChange !== 0 ? `<span class="position-change ${posChange > 0 ? 'position-up' : 'position-down'}"><span class="position-arrow">${posChange > 0 ? '▲' : '▼'}</span>${Math.abs(posChange)}</span>` : ''}</td>
+                <td><div class="team-name"><img src="${teamLogos[team.name]}" class="team-logo"><span>${team.name}</span></div></td>
+                <td>${team.P}</td><td>${team.W}</td><td>${team.L}</td><td>${team.NR}</td>
+                <td>${team.NRR > 0 ? '+' : ''}${team.NRR.toFixed(3)}</td><td>${team.Pts}</td>
+                <td class="${team.top4Chance >= 75 ? 'chance-high' : team.top4Chance >= 25 ? 'chance-medium' : 'chance-low'}">${team.top4Chance}%</td>
+                <td class="${team.top2Chance >= 75 ? 'chance-high' : team.top2Chance >= 25 ? 'chance-medium' : 'chance-low'}">${team.top2Chance}%</td>
+                <td><div class="change-indicator">
+                    <span class="change-pts ${pointsGained > 0 ? 'positive' : pointsGained < 0 ? 'negative' : 'neutral'}">${pointsGained > 0 ? '+' : ''}${pointsGained}</span>
+                    <span class="change-pct ${pctChange > 0 ? 'up' : pctChange < 0 ? 'down' : 'same'}">${Math.abs(pctChange)}% <span class="arrow">${pctChange > 0 ? '▲' : pctChange < 0 ? '▼' : ''}</span></span>
+                </div></td>
             `;
             tableBody.appendChild(row);
         });
     }
 
-    function getChanceClass(value) {
-        if (value >= 75) return 'chance-high';
-        if (value >= 25) return 'chance-medium';
-        return 'chance-low';
-    }
-
     function renderSchedule() {
-        const matchList = document.getElementById("matchList");
-        matchList.innerHTML = "";
+        const matchList = document.getElementById("matchList"); matchList.innerHTML = "";
+        let matchCount = 0;
         
         schedule.forEach((fixture, originalIndex) => {
-            if (activeFilters.size > 0 && !activeFilters.has(fixture.home) && !activeFilters.has(fixture.away)) {
-                return;
-            }
+            if ((currentTab === 'results' && !fixture.isOfficial) || (currentTab === 'fixtures' && fixture.isOfficial)) return;
+            if (activeFilters.size > 0 && !activeFilters.has(fixture.home) && !activeFilters.has(fixture.away)) return;
 
+            matchCount++;
             const div = document.createElement("div");
-            div.className = `match-row ${fixture.completed ? 'completed' : ''}`;
-            div.innerHTML = `
-                <div class="match-info">
-                    Match ${fixture.num} • ${fixture.date} • ${fixture.time}
-                </div>
-                <div class="match-teams">
-                    <div class="team-tile ${fixture.selectedWinner === fixture.home ? 'selected' : ''}" 
-                        onclick="handleButtonClick(${originalIndex}, '${fixture.home}')">
-                        <img src="${teamLogos[fixture.home]}" alt="${fixture.home}">
-                        <span>${fixture.home}</span>
+            div.className = `match-row ${(fixture.completed && !fixture.isOfficial) ? 'completed' : ''}`;
+            
+            if (currentTab === 'results') {
+                div.innerHTML = `
+                    <div class="match-info">Match ${fixture.num} • ${fixture.date}</div>
+                    <div class="results-layout">
+                        <div class="results-team ${fixture.selectedWinner === fixture.home ? 'winner' : ''}">
+                            <img src="${teamLogos[fixture.home]}"><span class="team-abbr">${fixture.home}</span>
+                        </div>
+                        <div class="results-score-center">
+                            <div class="score-main">
+                                <div class="score-detail">
+                                    <span class="runs">${fixture.homeScore || '-'}</span>
+                                    <span class="overs">${fixture.homeOvers ? `(${fixture.homeOvers} ov)` : ''}</span>
+                                    ${fixture.homeSuperOver ? `<span class="super-over">${fixture.homeSuperOver}</span>` : ''}
+                                </div>
+                                <div class="score-divider">VS</div>
+                                <div class="score-detail">
+                                    <span class="runs">${fixture.awayScore || '-'}</span>
+                                    <span class="overs">${fixture.awayOvers ? `(${fixture.awayOvers} ov)` : ''}</span>
+                                    ${fixture.awaySuperOver ? `<span class="super-over">${fixture.awaySuperOver}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="match-status-badge">${fixture.matchResult || (fixture.selectedWinner === 'NR' ? 'Match Abandoned' : 'Completed')}</div>
+                        </div>
+                        <div class="results-team ${fixture.selectedWinner === fixture.away ? 'winner' : ''}">
+                            <img src="${teamLogos[fixture.away]}"><span class="team-abbr">${fixture.away}</span>
+                        </div>
                     </div>
-                    <div style="font-weight: 600; opacity: 0.5; align-self: center;">VS</div>
-                    <div class="team-tile ${fixture.selectedWinner === fixture.away ? 'selected' : ''}"
-                        onclick="handleButtonClick(${originalIndex}, '${fixture.away}')">
-                        <img src="${teamLogos[fixture.away]}" alt="${fixture.away}">
-                        <span>${fixture.away}</span>
+                `;
+            } else {
+                const homeClick = `onclick="handleButtonClick(${originalIndex}, '${fixture.home}')"`;
+                const awayClick = `onclick="handleButtonClick(${originalIndex}, '${fixture.away}')"`;
+                div.innerHTML = `
+                    <div class="match-info">Match ${fixture.num} • ${fixture.date} • ${fixture.time}</div>
+                    <div class="match-teams">
+                        <div class="team-tile ${fixture.selectedWinner === fixture.home ? 'selected' : ''}" ${homeClick}>
+                            <img src="${teamLogos[fixture.home]}"><span class="team-abbr">${fixture.home}</span>
+                        </div>
+                        <div class="vs-text">VS</div>
+                        <div class="team-tile ${fixture.selectedWinner === fixture.away ? 'selected' : ''}" ${awayClick}>
+                            <img src="${teamLogos[fixture.away]}"><span class="team-abbr">${fixture.away}</span>
+                        </div>
                     </div>
-                </div>
-                <div class="match-nr">
-                    <button onclick="handleButtonClick(${originalIndex}, 'NR')"
-                        class="${fixture.selectedWinner === 'NR' ? 'selected' : ''}">
-                        No Result
-                    </button>
-                </div>
-            `;
+                    <div class="match-nr">
+                        <button onclick="handleButtonClick(${originalIndex}, 'NR')" class="${fixture.selectedWinner === 'NR' ? 'selected' : ''}">No Result</button>
+                    </div>
+                `;
+            }
             matchList.appendChild(div);
         });
+        if (matchCount === 0) matchList.innerHTML = `<div class="empty-message">There's nothing to display!</div>`;
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-        simulateMonteCarlo();
-        
-        initialTeams.forEach(team => {
-            const simTeam = teams.find(t => t.name === team.name);
-            team.originalTop4 = parseFloat(simTeam.top4Chance) || 0;
-            team.originalTop2 = parseFloat(simTeam.top2Chance) || 0;
-        });
-        
-        renderFilters();
-        renderTable();
-        renderSchedule();
-    });
+    document.addEventListener("DOMContentLoaded", loadData);
 </script>
 </body>
 </html>
