@@ -1,10 +1,10 @@
 {
   "teams": [
     { "name": "CSK", "P": 1, "W": 0, "L": 1, "NR": 0, "NRR": -4.171, "top4Chance": 0, "top2Chance": 0 },
-    { "name": "DC", "P": 0, "W": 0, "L": 0, "NR": 0, "NRR": 0.000, "top4Chance": 0, "top2Chance": 0 },
+    { "name": "DC", "P": 1, "W": 1, "L": 0, "NR": 0, "NRR": 1.397, "top4Chance": 0, "top2Chance": 0 },
     { "name": "GT", "P": 1, "W": 0, "L": 1, "NR": 0, "NRR": -0.509, "top4Chance": 0, "top2Chance": 0 },
     { "name": "KKR", "P": 1, "W": 0, "L": 1, "NR": 0, "NRR": -0.687, "top4Chance": 0, "top2Chance": 0 },
-    { "name": "LSG", "P": 0, "W": 0, "L": 0, "NR": 0, "NRR": 0.000, "top4Chance": 0, "top2Chance": 0 },
+    { "name": "LSG", "P": 1, "W": 0, "L": 1, "NR": 0, "NRR": -1.397, "top4Chance": 0, "top2Chance": 0 },
     { "name": "MI", "P": 1, "W": 1, "L": 0, "NR": 0, "NRR": 0.687, "top4Chance": 0, "top2Chance": 0 },
     { "name": "PBKS", "P": 1, "W": 1, "L": 0, "NR": 0, "NRR": 0.509, "top4Chance": 0, "top2Chance": 0 },
     { "name": "RCB", "P": 1, "W": 1, "L": 0, "NR": 0, "NRR": 2.907, "top4Chance": 0, "top2Chance": 0 },
@@ -16,7 +16,7 @@
     { "num": 2, "date": "29-03-2026", "time": "7:30 PM", "home": "MI", "away": "KKR", "isOfficial": true, "completed": true, "selectedWinner": "MI", "homeScore": "224/4", "homeOvers": "19.1", "awayScore": "220/4", "awayOvers": "20", "matchResult": "MI Won by 6 Wickets" },
     { "num": 3, "date": "30-03-2026", "time": "7:30 PM", "home": "RR", "away": "CSK", "isOfficial": true, "completed": true, "selectedWinner": "RR", "homeScore": "128/2", "homeOvers": "12.1", "awayScore": "127", "awayOvers": "19.4", "matchResult": "RR Won by 8 Wickets" },
     { "num": 4, "date": "31-03-2026", "time": "7:30 PM", "home": "PBKS", "away": "GT", "isOfficial": true, "completed": true, "selectedWinner": "PBKS", "homeScore": "165/7", "homeOvers": "19.1", "awayScore": "162/6", "awayOvers": "20", "matchResult": "PBKS Won by 3 Wickets" },
-    { "num": 5, "date": "01-04-2026", "time": "7:30 PM", "home": "LSG", "away": "DC", "isOfficial": false, "completed": false, "selectedWinner": null, "homeScore": "", "homeOvers": "", "awayScore": "", "awayOvers": "", "matchResult": "" },
+    { "num": 5, "date": "01-04-2026", "time": "7:30 PM", "home": "LSG", "away": "DC", "isOfficial": true, "completed": true, "selectedWinner": "DC", "homeScore": "141", "homeOvers": "18.4", "awayScore": "145/4", "awayOvers": "17.1", "matchResult": "DC Won by 6 Wickets" },
     { "num": 6, "date": "02-04-2026", "time": "7:30 PM", "home": "KKR", "away": "SRH", "isOfficial": false, "completed": false, "selectedWinner": null, "homeScore": "", "homeOvers": "", "awayScore": "", "awayOvers": "", "matchResult": ""},
     { "num": 7, "date": "03-04-2026", "time": "7:30 PM", "home": "CSK", "away": "PBKS", "isOfficial": false, "completed": false, "selectedWinner": null, "homeScore": "", "homeOvers": "", "awayScore": "", "awayOvers": "", "matchResult": ""},
     { "num": 8, "date": "04-04-2026", "time": "3:30 PM", "home": "DC", "away": "MI", "isOfficial": false, "completed": false, "selectedWinner": null, "homeScore": "", "homeOvers": "", "awayScore": "", "awayOvers": "", "matchResult": ""},
