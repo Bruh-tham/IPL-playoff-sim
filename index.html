@@ -2,118 +2,249 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>IPL 2026 Playoffs Simulator</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏏</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb; --primary-hover: #1d4ed8; --success: #22c55e; --danger: #ef4444; --warning: #f59e0b;
-            --background: #f8fafc; --card: #ffffff; --text: #1e293b; --text-muted: #64748b; --border: #e2e8f0;
-            --tile-hover: rgba(37, 99, 235, 0.08); --glow: rgba(37, 99, 235, 0.15); --shadow: rgba(0, 0, 0, 0.08);
+            --primary: #2563eb; --primary-hover: #1d4ed8; --success: #22c55e; 
+            --background: #f8fafc; --card: #ffffff; --text: #1e293b; --text-muted: #64748b; 
+            --border: #e2e8f0; --tile-hover: rgba(37, 99, 235, 0.08); --shadow: rgba(0, 0, 0, 0.08);
+            --glow: rgba(37, 99, 235, 0.15); --warning: #f59e0b;
         }
         body.dark-theme {
-            --primary: #3b82f6; --primary-hover: #60a5fa; --success: #4ade80; --danger: #f87171; --warning: #fbbf24;
-            --background: #0f172a; --card: #1e293b; --text: #f8fafc; --text-muted: #94a3b8; --border: #334155;
-            --tile-hover: rgba(59, 130, 246, 0.12); --glow: rgba(59, 130, 246, 0.25); --shadow: rgba(0, 0, 0, 0.4);
+            --primary: #3b82f6; --primary-hover: #60a5fa; --success: #4ade80; 
+            --background: #0f172a; --card: #1e293b; --text: #f8fafc; --text-muted: #94a3b8; 
+            --border: #334155; --tile-hover: rgba(59, 130, 246, 0.12); --shadow: rgba(0, 0, 0, 0.4);
+            --glow: rgba(59, 130, 246, 0.25); --warning: #fbbf24;
         }
-        body { font-family: 'Inter', sans-serif; padding: 30px 40px; margin: 0 auto; background-color: var(--background); color: var(--text); line-height: 1.6; transition: background-color 0.3s, color 0.3s; max-width: 1400px; }
         
-        .header-container { display: flex; justify-content: center; align-items: center; margin-bottom: 2rem; position: relative; }
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { overflow-x: hidden; }
+
+        body { 
+            font-family: 'Inter', sans-serif; padding: 30px 20px; margin: 0 auto; 
+            background-color: var(--background); color: var(--text); line-height: 1.6; 
+            transition: background-color 0.3s, color 0.3s; max-width: 1400px; 
+        }
+
+        .header-container { display: flex; justify-content: center; align-items: center; margin-bottom: 1.5rem; position: relative; width: 100%; }
         h1 { font-family: 'Montserrat', sans-serif; font-size: 2.25rem; font-weight: 700; margin: 0; color: var(--primary); text-align: center; }
-        .top-controls { position: absolute; right: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
-        
+
+        .top-controls { position: absolute; right: 0; display: flex; flex-direction: row; align-items: center; gap: 12px; z-index: 100;}
         .theme-toggle-top { width: 42px; height: 42px; border: none; border-radius: 50%; background: var(--text); color: var(--background) !important; font-size: 1.15rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px var(--shadow); }
         .theme-toggle-top:hover { transform: translateY(-2px); filter: brightness(1.1); }
-        .nav-link { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.85rem; color: var(--primary); text-decoration: none; background: var(--tile-hover); padding: 8px 14px; border-radius: 8px; transition: all 0.2s; border: 1px solid transparent; display: flex; align-items: center; gap: 6px; }
-        .nav-link:hover { background: var(--primary); color: #ffffff; border-color: var(--primary); }
         
+        /* Fully Clickable Nav Link */
+        .nav-link { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.85rem; color: var(--primary); text-decoration: none; background: var(--tile-hover); padding: 8px 14px; border-radius: 8px; transition: all 0.2s; border: 1px solid transparent; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
+        .nav-link * { pointer-events: none; } /* Ensures the entire box catches the click */
+        .nav-link:hover { background: var(--primary); color: white; border-color: var(--primary); }
         body.dark-theme .nav-link { color: #60a5fa; }
         body.dark-theme .nav-link:hover { color: #ffffff; }
 
-        table { border-spacing: 0; border-radius: 12px; overflow: hidden; background: var(--card); box-shadow: 0 4px 6px -1px var(--shadow); width: 100%; max-width: 1050px; margin: 0 auto 2rem; font-size: 0.95rem; font-family: 'Poppins', sans-serif; text-align: center; }
-        th { background: var(--primary); color: white; font-weight: 600; padding: 1rem; }
-        td { padding: 1rem; border-bottom: 1px solid var(--border); font-weight: 500; }
-        .team-name { display: flex; align-items: center; gap: 1rem; width: max-content; margin: 0 auto; text-align: left; }
-        .team-logo { width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; }
+        /* Proportionally sized Table */
+        .table-container { width: 100%; overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 6px -1px var(--shadow); background: var(--card); margin: 0 auto 2rem; max-width: 900px;}
+        table { width: 100%; border-spacing: 0; font-size: 1.1rem; font-family: 'Poppins', sans-serif; text-align: center; min-width: max-content; }
+        th { background: var(--primary); color: white; font-weight: 600; padding: 1rem 0.5rem; text-transform: uppercase; font-size: 0.95rem; }
+        td { padding: 1rem 0.5rem; border-bottom: 1px solid var(--border); vertical-align: middle; white-space: nowrap; font-weight: 500;}
         
+        /* Left-aligned team column & Centered Header */
+        #pointsTable th:nth-child(1), #pointsTable td:nth-child(1) { width: 80px; }
+        #pointsTable th:nth-child(2) { text-align: left; padding-left: 20px; } 
+        #pointsTable td:nth-child(2) .team-name { justify-content: flex-start; padding-left: 10px; width: auto; margin: 0; }
+        .team-name { display: flex; align-items: center; gap: 12px; }
+        .team-logo { width: 40px; height: 40px; object-fit: contain; }
+
+        .nrr-positive { color: var(--success) !important; font-weight: 700; }
+        .nrr-negative { color: #ef4444 !important; font-weight: 700; }
+        .nrr-neutral { color: var(--text-muted) !important; font-weight: 700; }
+
+        .position-change { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.95rem; font-weight: 600; margin-left: 6px; }
+        .position-up { color: var(--success) !important; }
+        .position-down { color: #ef4444 !important; }
+        .position-arrow { font-size: 0.8rem; }
+
+        .chance-high { color: var(--success) !important; font-weight: 600; }
+        .chance-medium { color: var(--warning) !important; font-weight: 600; }
+        .chance-low { color: #ef4444 !important; font-weight: 600; }
+
+        .change-indicator { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+        .change-pts { font-weight: 600; font-size: 1rem; }
+        .change-pts.positive { color: var(--success) !important; }
+        .change-pts.negative { color: #ef4444 !important; }
+        .change-pts.neutral { color: var(--text-muted) !important; }
+        .change-pct { font-size: 0.9rem; display: flex; align-items: center; gap: 2px; }
+        .change-pct.up { color: var(--success) !important; }
+        .change-pct.down { color: #ef4444 !important; }
+        .change-pct.same { color: var(--text-muted) !important; }
+
+        /* Simulator Header & Dropdown */
         .simulator { max-width: 1100px; width: 100%; margin: 0 auto; padding: 10px 0; display: flex; flex-direction: column; align-items: center; font-family: 'Poppins', sans-serif; }
-        .schedule-header { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 2rem; width: 100%; }
+        .schedule-header { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1.5rem; width: 100%; }
         .schedule-header h2 { color: var(--text); margin: 0; font-size: 1.75rem; text-align: center; }
+        
         .tabs { display: flex; background: var(--border); padding: 4px; border-radius: 10px; gap: 4px; }
         .tab-btn { border: none; background: transparent; padding: 0.5rem 1.5rem; border-radius: 8px; font-family: 'Poppins', sans-serif; font-weight: 600; cursor: pointer; color: var(--text-muted); transition: all 0.2s ease; }
         .tab-btn.active { background: var(--card); color: var(--primary); box-shadow: 0 2px 4px var(--shadow); }
         .tab-btn:hover:not(.active) { color: var(--text); }
         
+        .sort-container { margin-top: 5px; display: flex; align-items: center; gap: 8px; }
+        .sort-container select { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--background); color: var(--text); font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 0.85rem; cursor: pointer; outline: none; }
+        .sort-container select:focus { border-color: var(--primary); }
+
+        /* Enhanced Filter Row & NRR Toggle */
         .filter-header { text-align: center; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
-        .team-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-bottom: 2rem; width: 100%; }
-        .filter-btn { background: transparent; border: 2px solid transparent; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; padding: 4px; }
-        .filter-btn img { width: 100%; height: 100%; object-fit: contain; transition: all 0.3s ease; }
+        
+        .controls-row { display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 2rem;}
+        .team-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-bottom: 1rem; width: 100%; }
+        
+        .filter-btn { background: transparent; border: 2px solid transparent; border-radius: 50%; width: 66px; height: 66px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; padding: 6px; }
+        .filter-btn img { width: 100%; height: 100%; object-fit: contain; transition: all 0.3s ease; display: block; margin: auto;}
         .filter-btn.active { border-color: var(--primary); background: var(--tile-hover); transform: scale(1.05); }
         .filter-btn.dimmed img { opacity: 0.3; filter: grayscale(80%); }
 
+        /* Slider Toggle & Info */
+        .nrr-toggle-container { display: flex; justify-content: flex-end; align-items: center; gap: 12px; width: 100%; max-width: 1000px; padding-right: 10px;}
+        .toggle-label { font-family: 'Poppins', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--text); }
+        .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        .info-btn { background: var(--tile-hover); color: var(--primary); border: 1px solid var(--primary); border-radius: 50%; width: 24px; height: 24px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; margin-left: 4px; }
+        .info-btn:hover { background: var(--primary); color: white; transform: scale(1.1); }
+
+        /* --- Modals --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+        .modal-overlay.open { opacity: 1; pointer-events: auto; }
+        .modal-content { background: var(--card); border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; transform: translateY(20px); transition: transform 0.2s; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border); }
+        .modal-overlay.open .modal-content { transform: translateY(0); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .modal-title { font-family: 'Montserrat', sans-serif; font-size: 1.25rem; font-weight: 700; color: var(--primary); }
+        .modal-close { background: none; border: none; font-size: 1.75rem; cursor: pointer; color: var(--text-muted); line-height: 1; }
+        .modal-close:hover { color: #ef4444; }
+        .modal-body { font-size: 0.95rem; color: var(--text); line-height: 1.6; }
+        .modal-body ul { padding-left: 20px; margin-top: 10px; }
+        .modal-body li { margin-bottom: 6px; }
+        .code-badge { background: var(--tile-hover); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; }
+
+        /* --- Match Grid --- */
         #matchList { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; width: 100%; }
-        .match-row { background: var(--card); border-radius: 16px; padding: 1.25rem 1.5rem; margin: 0; box-shadow: 0 4px 12px var(--shadow); width: 100%; max-width: 360px; box-sizing: border-box; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; }
-        .match-info { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; font-weight: 500; }
+        .match-row { 
+            background: var(--card); border-radius: 12px; padding: 1.2rem 1.2rem; margin: 0; 
+            box-shadow: 0 4px 10px var(--shadow); width: 100%; max-width: 370px; 
+            box-sizing: border-box; border: 1px solid var(--border); 
+            display: flex; flex-direction: column; justify-content: center; 
+            position: relative; height: auto;
+        }
+
+        .match-header { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 12px; }
+        .match-info { text-align: left; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; margin: 0; line-height: 1.4; }
         
-        .match-teams { display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin: 0.5rem 0; }
-        .team-tile { width: 100px; position: relative; cursor: pointer; padding: 0.75rem 0.5rem; border-radius: 12px; text-align: center; transition: all 0.2s ease; border: 2px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; background: transparent; }
-        .team-tile img { width: 64px; height: 64px; object-fit: contain; margin-bottom: 8px; flex-shrink: 0; transition: transform 0.2s ease; }
-        .team-abbr { font-weight: 600; font-size: 1.05rem; transition: color 0.2s; color: var(--text); }
+        .time-tag { font-size: 0.65rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; height: fit-content; }
+        .time-tag.afternoon { background: #fef08a; color: #854d0e; }
+        body.dark-theme .time-tag.afternoon { background: #78350f; color: #fde68a; }
+        .time-tag.evening { background: #e0e7ff; color: #3730a3; }
+        body.dark-theme .time-tag.evening { background: #1e3a8a; color: #dbeafe; }
+
+        /* Fixtures Mode */
+        .match-teams { display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 0; }
+        .team-tile { width: 90px; position: relative; cursor: pointer; padding: 0.5rem; border-radius: 10px; text-align: center; transition: all 0.2s ease; border: 2px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; background: transparent; }
+        .team-tile img { width: 56px; height: 56px; object-fit: contain; margin-bottom: 4px; flex-shrink: 0; transition: transform 0.2s ease; }
+        .team-abbr { font-weight: 600; font-size: 1rem; transition: color 0.2s; color: var(--text); }
         .team-tile:not(.readonly):hover { background: var(--tile-hover); }
-        .team-tile.selected { background: transparent; border-color: var(--primary); box-shadow: 0 0 15px var(--glow), inset 0 0 0 1px var(--primary); }
+        .team-tile.selected { background: transparent; border-color: var(--success); box-shadow: 0 0 15px rgba(34, 197, 94, 0.15), inset 0 0 0 1px var(--success); }
         .team-tile.selected img { transform: scale(1.05); }
-        .team-tile.selected .team-abbr { color: var(--primary); }
-        .vs-text { font-weight: 700; opacity: 0.3; font-size: 0.9rem; }
+        .team-tile.selected .team-abbr { color: var(--success); }
+        
+        .vs-text { font-weight: 700; opacity: 0.3; font-size: 0.85rem; }
         .team-tile.readonly { cursor: default; }
-        .match-nr { display: flex; justify-content: center; margin-top: 1.25rem; }
-        .match-nr button { font-family: 'Poppins', sans-serif; background: transparent; color: var(--text-muted); border: 2px solid var(--border); padding: 0.5rem 2rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+
+        .match-nr { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 1rem; }
+        .match-nr button { font-family: 'Poppins', sans-serif; background: transparent; color: var(--text-muted); border: 2px solid var(--border); padding: 0.4rem 1.5rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
         .match-nr button.readonly { cursor: default; }
         .match-nr button:not(.readonly):hover { background: var(--tile-hover); color: var(--text); }
         .match-nr button.selected { background: transparent; color: var(--primary); border-color: var(--primary); box-shadow: 0 0 15px var(--glow); }
+        
+        .add-btn { background: var(--primary) !important; color: white !important; border-color: var(--primary) !important; }
+        .add-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
-        .results-layout { display: flex; justify-content: space-between; align-items: center; margin: 0.5rem 0; padding: 0.5rem 0; }
-        .results-team { display: flex; flex-direction: column; align-items: center; width: 85px; opacity: 0.4; transition: opacity 0.3s ease; }
-        .results-team.winner { opacity: 1; }
-        .results-team img { width: 64px; height: 64px; object-fit: contain; margin-bottom: 6px; }
-        .results-team .team-abbr { font-weight: 700; font-size: 1.05rem; color: var(--text); }
+        /* Results & NRR Mode Shared Layout */
+        .results-layout { display: flex; justify-content: space-between; align-items: center; margin: 0; padding: 0; }
+        .results-team { display: flex; flex-direction: column; align-items: center; width: 80px; transition: all 0.3s ease; border: 2px solid transparent; border-radius: 10px; padding: 0.5rem; }
+        .results-team.winner { opacity: 1; border-color: var(--success); background: var(--tile-hover); box-shadow: 0 0 15px rgba(34, 197, 94, 0.15), inset 0 0 0 1px var(--success); }
+        .results-team.full-opacity { opacity: 1; }
+        .results-team:not(.winner):not(.full-opacity) { opacity: 0.4; }
+        
+        .results-team img { width: 56px; height: 56px; object-fit: contain; margin-bottom: 4px; transition: transform 0.2s;}
+        .results-team.winner img { transform: scale(1.05); }
+        .results-team .team-abbr { font-weight: 700; font-size: 1rem; color: var(--text); }
         .results-team.winner .team-abbr { color: var(--success); }
-        .results-score-center { display: flex; flex-direction: column; align-items: center; flex-grow: 1; padding: 0 10px; }
-        .score-main { display: flex; align-items: flex-start; gap: 12px; }
+        
+        .results-score-center { display: flex; flex-direction: column; align-items: center; flex-grow: 1; padding: 0 8px; }
+        .score-main { display: flex; align-items: flex-start; gap: 10px; }
         .score-detail { text-align: center; display: flex; flex-direction: column; align-items: center; }
-        .score-detail .runs { font-size: 1.4rem; font-weight: 700; color: var(--text); line-height: 1.1; }
-        .score-detail .overs { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; margin-top: 4px; }
-        .score-detail .super-over { font-size: 0.95rem; color: var(--text); font-weight: 700; margin-top: 2px; opacity: 0.9; }
-        .score-divider { font-size: 1rem; font-weight: 600; color: var(--text-muted); opacity: 0.4; margin-top: 4px; }
-        .match-status-badge { font-size: 0.8rem; font-weight: 600; color: var(--primary); background: var(--tile-hover); padding: 6px 12px; border-radius: 8px; margin-top: 14px; text-align: center; line-height: 1.3; width: max-content; max-width: 100%; }
+        .score-detail .runs { font-size: 1.3rem; font-weight: 700; color: var(--text); line-height: 1.1; }
+        .score-detail .overs { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin-top: 4px; white-space: nowrap; }
+        .score-detail .super-over { font-size: 0.85rem; color: var(--text); font-weight: 700; margin-top: 2px; opacity: 0.9; white-space: nowrap;}
+        .score-divider { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); opacity: 0.4; margin-top: 4px; }
+        
+        .match-status-badge { font-size: 0.8rem; font-weight: 600; color: var(--primary); background: var(--tile-hover); padding: 6px 10px; border-radius: 6px; margin-top: 10px; text-align: center; line-height: 1.4; width: max-content; max-width: 100%; white-space: normal; word-break: break-word; height: auto; }
+
+        /* NRR Mode Inputs */
+        .nrr-mode-inputs { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+        .nrr-mini-inp { width: 60px; padding: 4px; font-size: 0.8rem; text-align: center; border-radius: 4px; border: 1px solid var(--border); background: var(--background); color: var(--text); font-family: 'Poppins', sans-serif; font-weight: 600; }
+        .nrr-mini-inp:focus { outline: none; border-color: var(--primary); }
+        .nrr-mini-inp::-webkit-outer-spin-button, .nrr-mini-inp::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
         .empty-message { grid-column: 1 / -1; text-align: center; font-size: 1.1rem; font-weight: 500; color: var(--text-muted); padding: 3rem 1rem; background: var(--card); border-radius: 12px; box-shadow: 0 4px 8px var(--shadow); width: 100%; max-width: 400px; margin: 0 auto; }
+
+        .footer { text-align: center; padding: 1.25rem; margin: 2rem auto 0; font-family: 'Inter', sans-serif; color: var(--text-muted); background: var(--card); border-radius: 12px; box-shadow: 0 4px 6px -1px var(--shadow); font-size: 0.95rem; max-width: 1000px; }
+        .footer a { color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 500; transition: color 0.2s; }
+        .footer a:hover { color: var(--primary); }
+        .footer svg { width: 16px; height: 16px; }
+        .heart { color: #ef4444; display: inline-block; margin: 0 0.25rem; }
 
         .action-buttons { position: fixed; bottom: 2rem; right: 2rem; display: flex; gap: 1rem; z-index: 100; }
         .action-buttons button { width: 44px; height: 44px; border: none; border-radius: 50%; color: white; font-size: 1.25rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
-        .btn-top { background: var(--success); }
-        .btn-reset { background: var(--danger); }
+        .btn-top { background: var(--success); box-shadow: 0 4px 6px var(--shadow); }
+        .btn-reset { background: #ef4444; box-shadow: 0 4px 6px var(--shadow); }
         .action-buttons button:hover { transform: translateY(-2px); filter: brightness(1.1); }
-        .chance-high { color: var(--success); font-weight: 600; }
-        .chance-medium { color: var(--warning); font-weight: 600; }
-        .chance-low { color: var(--danger); font-weight: 600; }
-        .change-indicator { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
-        .change-pts { font-weight: 600; font-size: 0.9rem; }
-        .change-pts.positive { color: var(--success); }
-        .change-pts.negative { color: var(--danger); }
-        .change-pts.neutral { color: var(--text-muted); }
-        .change-pct { font-size: 0.85rem; display: flex; align-items: center; gap: 2px; }
-        .change-pct.up { color: var(--success); }
-        .change-pct.down { color: var(--danger); }
-        .change-pct.same { color: var(--text-muted); }
 
-        @media (max-width: 950px) {
-            .header-container { flex-direction: column; align-items: center; gap: 15px; text-align: center; }
-            .top-controls { position: relative; flex-direction: row; justify-content: center; }
+        /* Media Queries */
+        @media (max-width: 950px) and (orientation: landscape) {
+            body { padding: 15px 25px; }
+            .header-container { margin-bottom: 1rem; }
+            h1 { font-size: 1.8rem; }
+            .theme-toggle-top { width: 38px; height: 38px; font-size: 1rem; }
+            .nav-link { font-size: 0.8rem; padding: 6px 12px; }
+            .filter-btn { width: 55px; height: 55px; padding: 5px; }
+            .nrr-toggle-container { padding-right: 0; justify-content: center; }
+            .match-row { padding: 1rem; max-width: 340px; }
+            .team-tile { width: 90px; padding: 0.5rem; }
+            .team-tile img, .results-team img { width: 52px; height: 52px; margin-bottom: 6px; }
+            .team-abbr { font-size: 0.9rem; }
+            .score-detail .runs { font-size: 1.2rem; }
+            .score-detail .overs { font-size: 0.8rem; }
+            table { font-size: 0.95rem; }
+            .team-logo { width: 32px; height: 32px; }
         }
+
         @media (max-width: 768px) {
-            body { padding: 20px 15px; }
-            table { font-size: 0.85rem; display: block; overflow-x: auto; white-space: nowrap; }
+            body { padding: 20px 10px; }
+            .header-container { flex-direction: column; align-items: center; gap: 15px; margin-bottom: 1.5rem; position: static; }
+            .top-controls { position: static; flex-direction: row; justify-content: center; width: 100%; }
+            h1 { font-size: 1.75rem; text-align: center; }
+            .filter-btn { width: 55px; height: 55px; }
+            .nrr-toggle-container { padding-right: 0; justify-content: center; }
             .match-row { padding: 1.25rem 1rem; max-width: 100%; }
+            .team-tile img, .results-team img { width: 56px; height: 56px; }
+            .score-detail .runs { font-size: 1.25rem; }
+            table { font-size: 0.95rem; display: block; overflow-x: auto; white-space: nowrap; }
+            .team-logo { width: 32px; height: 32px; }
         }
     </style>
 </head>
@@ -122,29 +253,31 @@
 <div class="header-container">
     <h1>IPL 2026 Playoffs Simulator</h1>
     <div class="top-controls">
-        <button class="theme-toggle-top" onclick="toggleTheme()" title="Toggle Dark Mode">🌓</button>
-        <a href="nrr.html" class="nav-link">Advanced Editor <span>➔</span></a>
+        <button class="theme-toggle-top" onclick="toggleTheme()" title="Toggle Dark Mode"><span style="pointer-events: none;">🌓</span></button>
+        <a href="nrr.html" class="nav-link">Sandbox Editor <span style="font-size: 1.2em; line-height: 1;">&rarr;</span></a>
     </div>
 </div>
 
-<table id="pointsTable">
-    <thead>
-        <tr>
-            <th>Pos</th>
-            <th>Team</th>
-            <th>P</th>
-            <th>W</th>
-            <th>L</th>
-            <th>NR</th>
-            <th>NRR</th>
-            <th>Pts</th>
-            <th>Top 4 %</th>
-            <th>Top 2 %</th>
-            <th>Changes</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+<div class="table-container">
+    <table id="pointsTable">
+        <thead>
+            <tr>
+                <th>Pos</th>
+                <th style="text-align: center;">Team</th>
+                <th>P</th>
+                <th>W</th>
+                <th>L</th>
+                <th>NR</th>
+                <th>NRR</th>
+                <th>Pts</th>
+                <th>Top 4 %</th>
+                <th>Top 2 %</th>
+                <th>Changes</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
 
 <div class="simulator">
     <div class="schedule-header">
@@ -153,14 +286,76 @@
             <button class="tab-btn active" onclick="setTab('fixtures')" id="tabFixtures">Fixtures</button>
             <button class="tab-btn" onclick="setTab('results')" id="tabResults">Results</button>
         </div>
+        
+        <div class="sort-container" id="sortContainer" style="display: none;">
+            <label for="resultSort" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Sort:</label>
+            <select id="resultSort" onchange="renderSchedule()">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+            </select>
+        </div>
     </div>
+    
     <div class="filter-header">- Filter Matches By Team -</div>
-    <div class="team-filters" id="teamFilters"></div>
+    
+    <div class="controls-row">
+        <div class="team-filters" id="teamFilters"></div>
+        <div class="nrr-toggle-container" id="nrrToggleContainer">
+            <span class="toggle-label">NRR Mode</span>
+            <label class="switch">
+                <input type="checkbox" id="nrrModeToggle" onchange="toggleNrrMode()">
+                <span class="slider"></span>
+            </label>
+            <button class="info-btn" onclick="openModal('nrrGuideModal')" title="NRR Mode Instructions">?</button>
+        </div>
+    </div>
+
     <div id="matchList"></div>
 </div>
 
+<div class="modal-overlay" id="nrrGuideModal" onclick="closeModal(event, 'nrrGuideModal')">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="modal-title">NRR Mode Guide</span>
+            <button class="modal-close" onclick="closeModal(null, 'nrrGuideModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Predicting exact scores allows the simulator to calculate dynamically shifting Net Run Rates for more accurate probabilities!</p>
+            <ul>
+                <li><strong>1. Select Winner:</strong> Click a team's logo to tentatively select them (or 'No Result').</li>
+                <li><strong>2. Input Scores:</strong> Type predicted Runs and Overs.</li>
+                <li><strong>3. Submit:</strong> Click <span class="code-badge">Add</span> to run the simulator and lock in the math.</li>
+            </ul>
+            <p><em>Note: Overs use standard cricket math (e.g. 19.4 = 19 overs, 4 balls). If a team gets bowled out, technically log their overs as 20.0.</em></p>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="errorModal" onclick="closeModal(event, 'errorModal')">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="modal-title" style="color: var(--warning); display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 1.5rem;">⚠️</span> Action Required
+            </span>
+            <button class="modal-close" onclick="closeModal(null, 'errorModal')">&times;</button>
+        </div>
+        <div class="modal-body" id="errorModalBody" style="text-align: center; font-weight: 500;">
+            </div>
+    </div>
+</div>
+
+<footer class="footer">
+    Made with <span class="heart">♥</span> by 
+    <a href="https://twitter.com/Prathamjc18" target="_blank" title="Twitter Profile">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+        </svg>
+        @Prathamjc18
+    </a>
+</footer>
+
 <div class="action-buttons">
-    <button class="btn-top" onclick="window.scrollTo(0,0)" title="Go to top">↑</button>
+    <button class="btn-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Go to top">↑</button>
     <button class="btn-reset" onclick="resetData()" title="Reset data">↺</button>
 </div>
 
@@ -176,6 +371,13 @@
     }
     initTheme();
 
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(event, id) {
+        if (!event || event.target.id === id || event.target.classList.contains('modal-close')) {
+            document.getElementById(id).classList.remove('open');
+        }
+    }
+
     const teamLogos = {
         CSK: "https://scores.iplt20.com/ipl/teamlogos/CSK.png", DC: "https://scores.iplt20.com/ipl/teamlogos/DC.png", GT: "https://scores.iplt20.com/ipl/teamlogos/GT.png",
         KKR: "https://scores.iplt20.com/ipl/teamlogos/KKR.png", LSG: "https://scores.iplt20.com/ipl/teamlogos/LSG.png", MI: "https://scores.iplt20.com/ipl/teamlogos/MI.png",
@@ -183,25 +385,67 @@
     };
 
     let initialTeams = [], initialSchedule = [], teams = [], schedule = [];
-    let initialSortedTeams = null, activeFilters = new Set(), currentTab = 'fixtures';
+    let initialSortedTeams = null, activeFilters = new Set();
+    let currentTab = 'fixtures', nrrMode = false;
+    let originalNrrData = {};
+
+    function parseOvers(overString) {
+        if (!overString) return 0;
+        let parts = String(overString).split('.');
+        let fullOvers = parseInt(parts[0]) || 0;
+        let balls = parts.length > 1 ? parseInt(parts[1]) || 0 : 0;
+        return fullOvers + (balls / 6);
+    }
+    function parseRuns(scoreStr) {
+        if (!scoreStr) return 0;
+        return parseInt(scoreStr.split('/')[0]) || 0;
+    }
+    function calculateNRR(rs, of, rc, ob) {
+        if (of === 0 || ob === 0) return 0;
+        return (rs / of) - (rc / ob);
+    }
 
     async function loadData() {
         try {
             const response = await fetch('data.json');
             const data = await response.json();
-            initialTeams = data.teams.map(team => ({ ...team, Pts: (team.W * 2) + team.NR }));
+            
+            initialTeams = data.teams.map(team => ({ ...team, Pts: (team.W * 2) + (team.NR || 0) }));
             initialSchedule = data.schedule;
             teams = JSON.parse(JSON.stringify(initialTeams));
             schedule = JSON.parse(JSON.stringify(initialSchedule));
+
+            Object.keys(teamLogos).forEach(team => { originalNrrData[team] = { runsScored: 0, oversFaced: 0, runsConceded: 0, oversBowled: 0 }; });
+            
+            data.schedule.filter(m => m.isOfficial && m.completed).forEach(match => {
+                if (match.selectedWinner !== "NR") {
+                    let homeR = parseRuns(match.homeScore), awayR = parseRuns(match.awayScore);
+                    let homeOvStr = match.homeOvers, awayOvStr = match.awayOvers;
+
+                    if (match.homeScore && (match.homeScore.includes("/10") || (!match.homeScore.includes("/") && parseFloat(homeOvStr) < 20))) { homeOvStr = "20.0"; }
+                    if (match.awayScore && (match.awayScore.includes("/10") || (!match.awayScore.includes("/") && parseFloat(awayOvStr) < 20))) { awayOvStr = "20.0"; }
+
+                    if(originalNrrData[match.home]) {
+                        originalNrrData[match.home].runsScored += homeR; originalNrrData[match.home].oversFaced += parseOvers(homeOvStr);
+                        originalNrrData[match.home].runsConceded += awayR; originalNrrData[match.home].oversBowled += parseOvers(awayOvStr);
+                    }
+                    if(originalNrrData[match.away]) {
+                        originalNrrData[match.away].runsScored += awayR; originalNrrData[match.away].oversFaced += parseOvers(awayOvStr);
+                        originalNrrData[match.away].runsConceded += homeR; originalNrrData[match.away].oversBowled += parseOvers(homeOvStr);
+                    }
+                }
+            });
+
             simulateMonteCarlo();
             initialTeams.forEach(team => {
                 const simTeam = teams.find(t => t.name === team.name);
                 team.originalTop4 = parseFloat(simTeam.top4Chance) || 0;
                 team.originalTop2 = parseFloat(simTeam.top2Chance) || 0;
             });
+            
             renderFilters(); renderTable(); renderSchedule();
         } catch (error) {
-            document.getElementById('matchList').innerHTML = `<div class="empty-message">Error loading data.json. Ensure local server is running.</div>`;
+            document.getElementById('matchList').innerHTML = `<div class="empty-message">Error loading data.json. Make sure you are running a local web server!</div>`;
         }
     }
 
@@ -210,22 +454,57 @@
         document.getElementById('tabFixtures').classList.toggle('active', tab === 'fixtures');
         document.getElementById('tabResults').classList.toggle('active', tab === 'results');
         document.getElementById('scheduleHeading').innerText = tab === 'fixtures' ? 'Fixtures' : 'Results';
+        document.getElementById('sortContainer').style.display = tab === 'results' ? 'flex' : 'none';
+        document.getElementById('nrrToggleContainer').style.display = tab === 'fixtures' ? 'flex' : 'none';
+        renderSchedule();
+    }
+
+    function toggleNrrMode() {
+        nrrMode = document.getElementById('nrrModeToggle').checked;
         renderSchedule();
     }
 
     function recalculateStandings() {
         teams = JSON.parse(JSON.stringify(initialTeams));
         let teamMap = {}; teams.forEach(t => teamMap[t.name] = t);
+        let tempNrrData = JSON.parse(JSON.stringify(originalNrrData));
+
         schedule.forEach(match => {
             if (match.completed && match.selectedWinner && !match.isOfficial) {
                 const t1 = teamMap[match.home], t2 = teamMap[match.away];
                 t1.P++; t2.P++;
-                if (match.selectedWinner === "NR") { t1.NR++; t2.NR++; t1.Pts++; t2.Pts++; }
-                else if (match.selectedWinner === t1.name) { t1.W++; t1.Pts+=2; t2.L++; }
-                else { t2.W++; t2.Pts+=2; t1.L++; }
+                
+                if (match.selectedWinner === "NR") {
+                    t1.NR++; t2.NR++; t1.Pts++; t2.Pts++;
+                } else if (match.selectedWinner === t1.name) {
+                    t1.W++; t1.Pts += 2; t2.L++;
+                } else {
+                    t2.W++; t2.Pts += 2; t1.L++;
+                }
+
+                if (nrrMode && match.selectedWinner !== "NR" && match.predictedHomeRuns !== undefined && match.predictedHomeRuns !== "") {
+                    let hr = parseFloat(match.predictedHomeRuns) || 0;
+                    let ho = parseOvers(match.predictedHomeOvers || "0");
+                    let ar = parseFloat(match.predictedAwayRuns) || 0;
+                    let ao = parseOvers(match.predictedAwayOvers || "0");
+
+                    if (tempNrrData[match.home]) {
+                        tempNrrData[match.home].runsScored += hr; tempNrrData[match.home].oversFaced += ho;
+                        tempNrrData[match.home].runsConceded += ar; tempNrrData[match.home].oversBowled += ao;
+                    }
+                    if (tempNrrData[match.away]) {
+                        tempNrrData[match.away].runsScored += ar; tempNrrData[match.away].oversFaced += ao;
+                        tempNrrData[match.away].runsConceded += hr; tempNrrData[match.away].oversBowled += ho;
+                    }
+                }
             }
         });
-        teams = Object.values(teamMap);
+
+        teams.forEach(t => {
+            if (tempNrrData[t.name]) {
+                t.NRR = calculateNRR(tempNrrData[t.name].runsScored, tempNrrData[t.name].oversFaced, tempNrrData[t.name].runsConceded, tempNrrData[t.name].oversBowled);
+            }
+        });
     }
 
     function simulateMonteCarlo(numSimulations = 10000) {
@@ -233,19 +512,23 @@
         teams.forEach(t => { top4Count[t.name] = 0; top2Count[t.name] = 0; });
         const remainingMatches = schedule.filter(m => !m.completed);
         const baseTeamsArray = teams.map(t => ({ name: t.name, Pts: t.Pts, NRR: t.NRR }));
+
         for (let sim = 0; sim < numSimulations; sim++) {
             let simTeams = baseTeamsArray.map(t => ({...t})), teamMap = {};
             simTeams.forEach(t => teamMap[t.name] = t);
+
             for (let i = 0; i < remainingMatches.length; i++) {
                 const match = remainingMatches[i], random = Math.random();
                 if (random < 0.49) teamMap[match.home].Pts += 2;
                 else if (random < 0.98) teamMap[match.away].Pts += 2;
                 else { teamMap[match.home].Pts += 1; teamMap[match.away].Pts += 1; }
             }
+
             simTeams.sort((a, b) => {
                 if (b.Pts !== a.Pts) return b.Pts - a.Pts;
-                return (b.NRR + (Math.random()*0.4-0.2)) - (a.NRR + (Math.random()*0.4-0.2));
+                return (b.NRR + (Math.random() * 0.4 - 0.2)) - (a.NRR + (Math.random() * 0.4 - 0.2));
             });
+
             for(let i=0; i<4; i++) {
                 if(simTeams[i]) {
                     top4Count[simTeams[i].name]++;
@@ -253,6 +536,7 @@
                 }
             }
         }
+
         teams.forEach(team => {
             team.top4Chance = ((top4Count[team.name] / numSimulations) * 100).toFixed(2);
             team.top2Chance = ((top2Count[team.name] / numSimulations) * 100).toFixed(2);
@@ -260,9 +544,61 @@
     }
 
     function handleButtonClick(index, winner) {
-        if (schedule[index].isOfficial) return; 
-        schedule[index].completed = (schedule[index].selectedWinner !== winner);
-        schedule[index].selectedWinner = schedule[index].completed ? winner : null;
+        const fixture = schedule[index];
+        if (fixture.isOfficial) return; 
+        
+        if (fixture.selectedWinner === winner) {
+            fixture.selectedWinner = null; fixture.completed = false; fixture.tempWinner = null;
+        } else {
+            fixture.selectedWinner = winner; fixture.completed = true; fixture.tempWinner = winner;
+        }
+        recalculateStandings(); simulateMonteCarlo(); renderTable(); renderSchedule();
+    }
+
+    function selectNrrWinner(index, winner) {
+        const fixture = schedule[index];
+        if (fixture.tempWinner === winner) {
+            fixture.tempWinner = null;
+        } else {
+            fixture.tempWinner = winner;
+        }
+        renderSchedule();
+    }
+
+    function saveNrrMatch(index) {
+        const fixture = schedule[index];
+        let winnerToSave = fixture.tempWinner !== undefined ? fixture.tempWinner : fixture.selectedWinner;
+        
+        if (!winnerToSave) {
+            document.getElementById('errorModalBody').innerHTML = "Please select a winning team or <strong>'No Result'</strong> before adding NRR scores.";
+            openModal('errorModal');
+            return;
+        }
+
+        fixture.selectedWinner = winnerToSave;
+        fixture.completed = true;
+
+        fixture.predictedHomeRuns = fixture.tempHR !== undefined ? fixture.tempHR : (document.getElementById(`nrr-hr-${index}`)?.value || "");
+        fixture.predictedHomeOvers = fixture.tempHO !== undefined ? fixture.tempHO : (document.getElementById(`nrr-ho-${index}`)?.value || "");
+        fixture.predictedAwayRuns = fixture.tempAR !== undefined ? fixture.tempAR : (document.getElementById(`nrr-ar-${index}`)?.value || "");
+        fixture.predictedAwayOvers = fixture.tempAO !== undefined ? fixture.tempAO : (document.getElementById(`nrr-ao-${index}`)?.value || "");
+        
+        recalculateStandings(); simulateMonteCarlo(); renderTable(); renderSchedule();
+    }
+
+    function resetMatch(index) {
+        schedule[index].selectedWinner = null;
+        schedule[index].tempWinner = null;
+        schedule[index].completed = false;
+        schedule[index].predictedHomeRuns = "";
+        schedule[index].predictedHomeOvers = "";
+        schedule[index].predictedAwayRuns = "";
+        schedule[index].predictedAwayOvers = "";
+        schedule[index].tempHR = "";
+        schedule[index].tempHO = "";
+        schedule[index].tempAR = "";
+        schedule[index].tempAO = "";
+        
         recalculateStandings(); simulateMonteCarlo(); renderTable(); renderSchedule();
     }
 
@@ -283,6 +619,7 @@
             const btn = document.createElement("button");
             const isActive = activeFilters.size === 0 || activeFilters.has(team);
             btn.className = `filter-btn ${isActive ? 'active' : 'dimmed'}`;
+            btn.title = `Filter matches for ${team}`;
             btn.onclick = () => toggleFilter(team);
             btn.innerHTML = `<img src="${teamLogos[team]}" alt="${team}">`;
             container.appendChild(btn);
@@ -291,50 +628,93 @@
 
     function renderTable() {
         const tableBody = document.querySelector("#pointsTable tbody"); tableBody.innerHTML = "";
+        
         const sortedTeams = [...teams].sort((a, b) => b.Pts !== a.Pts ? b.Pts - a.Pts : b.NRR - a.NRR);
-        if (!initialSortedTeams) initialSortedTeams = sortedTeams.map(t => t.name);
+        if (!initialSortedTeams) initialSortedTeams = sortedTeams.map(team => team.name);
 
         sortedTeams.forEach((team, index) => {
             const originalIndex = initialSortedTeams.indexOf(team.name);
-            const posChange = originalIndex - index;
+            const positionChange = originalIndex - index;
+            
+            let posMarkup = `<span>${index + 1}</span>`;
+            if (positionChange !== 0) {
+                posMarkup = `
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        <span>${index + 1}</span>
+                        <span class="position-change ${positionChange > 0 ? 'position-up' : 'position-down'}">
+                            <span class="position-arrow">${positionChange > 0 ? '▲' : '▼'}</span>${Math.abs(positionChange)}
+                        </span>
+                    </div>
+                `;
+            }
+
             const originalTeam = initialTeams.find(t => t.name === team.name);
             const pointsGained = team.Pts - originalTeam.Pts;
             const pctChange = (parseFloat(team.top4Chance) - (originalTeam.originalTop4 || 0)).toFixed(2);
 
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${index + 1} ${posChange !== 0 ? `<span class="position-change ${posChange > 0 ? 'position-up' : 'position-down'}"><span class="position-arrow">${posChange > 0 ? '▲' : '▼'}</span>${Math.abs(posChange)}</span>` : ''}</td>
-                <td><div class="team-name"><img src="${teamLogos[team.name]}" class="team-logo"><span>${team.name}</span></div></td>
-                <td>${team.P}</td><td>${team.W}</td><td>${team.L}</td><td>${team.NR}</td>
-                <td>${team.NRR > 0 ? '+' : ''}${team.NRR.toFixed(3)}</td><td>${team.Pts}</td>
-                <td class="${team.top4Chance >= 75 ? 'chance-high' : team.top4Chance >= 25 ? 'chance-medium' : 'chance-low'}">${team.top4Chance}%</td>
-                <td class="${team.top2Chance >= 75 ? 'chance-high' : team.top2Chance >= 25 ? 'chance-medium' : 'chance-low'}">${team.top2Chance}%</td>
-                <td><div class="change-indicator">
-                    <span class="change-pts ${pointsGained > 0 ? 'positive' : pointsGained < 0 ? 'negative' : 'neutral'}">${pointsGained > 0 ? '+' : ''}${pointsGained}</span>
-                    <span class="change-pct ${pctChange > 0 ? 'up' : pctChange < 0 ? 'down' : 'same'}">${Math.abs(pctChange)}% <span class="arrow">${pctChange > 0 ? '▲' : pctChange < 0 ? '▼' : ''}</span></span>
-                </div></td>
+                <td style="font-weight:700">${posMarkup}</td>
+                <td><div class="team-name"><img src="${teamLogos[team.name]}" alt="${team.name}" class="team-logo"><span style="font-weight:600;">${team.name}</span></div></td>
+                <td>${team.P}</td><td>${team.W}</td><td>${team.L}</td><td>${team.NR || 0}</td>
+                <td class="${team.NRR > 0 ? 'nrr-positive' : team.NRR < 0 ? 'nrr-negative' : 'nrr-neutral'}">${team.NRR > 0 ? '+' : ''}${team.NRR.toFixed(3)}</td>
+                <td style="color:var(--primary); font-weight:700">${team.Pts}</td>
+                <td class="${getChanceClass(team.top4Chance)}">${team.top4Chance}%</td>
+                <td class="${getChanceClass(team.top2Chance)}">${team.top2Chance}%</td>
+                <td>
+                    <div class="change-indicator">
+                        <span class="change-pts ${pointsGained > 0 ? 'positive' : pointsGained < 0 ? 'negative' : 'neutral'}">${pointsGained > 0 ? '+' : ''}${pointsGained}</span>
+                        <span class="change-pct ${pctChange > 0 ? 'up' : pctChange < 0 ? 'down' : 'same'}">${Math.abs(pctChange)}%<span class="arrow">${pctChange > 0 ? '▲' : pctChange < 0 ? '▼' : ''}</span></span>
+                    </div>
+                </td>
             `;
             tableBody.appendChild(row);
         });
+    }
+
+    function getChanceClass(value) {
+        if (value >= 75) return 'chance-high';
+        if (value >= 25) return 'chance-medium';
+        return 'chance-low';
     }
 
     function renderSchedule() {
         const matchList = document.getElementById("matchList"); matchList.innerHTML = "";
         let matchCount = 0;
         
-        schedule.forEach((fixture, originalIndex) => {
-            if ((currentTab === 'results' && !fixture.isOfficial) || (currentTab === 'fixtures' && fixture.isOfficial)) return;
+        let displayMatches = schedule.map((fixture, index) => ({ fixture, originalIndex: index }));
+        
+        if (currentTab === 'results') {
+            displayMatches = displayMatches.filter(item => item.fixture.isOfficial);
+            if (document.getElementById('resultSort').value === 'newest') displayMatches.reverse();
+        } else {
+            displayMatches = displayMatches.filter(item => !item.fixture.isOfficial);
+        }
+        
+        displayMatches.forEach(item => {
+            const fixture = item.fixture, originalIndex = item.originalIndex;
             if (activeFilters.size > 0 && !activeFilters.has(fixture.home) && !activeFilters.has(fixture.away)) return;
 
             matchCount++;
             const div = document.createElement("div");
-            div.className = `match-row ${(fixture.completed && !fixture.isOfficial) ? 'completed' : ''}`;
+            const predictedCompleteClass = (fixture.completed && !fixture.isOfficial) ? 'completed' : '';
+            div.className = `match-row ${predictedCompleteClass}`;
             
+            const isAfternoon = fixture.time && fixture.time.includes('3:30');
+            const timeTagHTML = `<div class="time-tag ${isAfternoon ? 'afternoon' : 'evening'}">${isAfternoon ? 'AFTERNOON' : 'EVENING'}</div>`;
+
             if (currentTab === 'results') {
+                let homeClass = fixture.selectedWinner === fixture.home ? 'winner full-opacity' : 'full-opacity';
+                let awayClass = fixture.selectedWinner === fixture.away ? 'winner full-opacity' : 'full-opacity';
+                const noResultStatus = fixture.selectedWinner === 'NR' ? 'Match Abandoned' : 'Completed';
+
                 div.innerHTML = `
-                    <div class="match-info">Match ${fixture.num} • ${fixture.date}</div>
+                    <div class="match-header">
+                        <div class="match-info">Match ${fixture.num} • ${fixture.date}</div>
+                        ${timeTagHTML}
+                    </div>
                     <div class="results-layout">
-                        <div class="results-team ${fixture.selectedWinner === fixture.home ? 'winner' : ''}">
+                        <div class="results-team ${homeClass}">
                             <img src="${teamLogos[fixture.home]}"><span class="team-abbr">${fixture.home}</span>
                         </div>
                         <div class="results-score-center">
@@ -351,18 +731,61 @@
                                     ${fixture.awaySuperOver ? `<span class="super-over">${fixture.awaySuperOver}</span>` : ''}
                                 </div>
                             </div>
-                            <div class="match-status-badge">${fixture.matchResult || (fixture.selectedWinner === 'NR' ? 'Match Abandoned' : 'Completed')}</div>
+                            <div class="match-status-badge">${fixture.matchResult || noResultStatus}</div>
                         </div>
-                        <div class="results-team ${fixture.selectedWinner === fixture.away ? 'winner' : ''}">
+                        <div class="results-team ${awayClass}">
                             <img src="${teamLogos[fixture.away]}"><span class="team-abbr">${fixture.away}</span>
                         </div>
+                    </div>
+                `;
+            } else if (nrrMode) {
+                let activeWinner = fixture.tempWinner !== undefined ? fixture.tempWinner : fixture.selectedWinner;
+                let homeClass = activeWinner === fixture.home ? 'winner full-opacity' : 'full-opacity';
+                let awayClass = activeWinner === fixture.away ? 'winner full-opacity' : 'full-opacity';
+                const nrClass = activeWinner === 'NR' ? 'selected' : '';
+
+                div.innerHTML = `
+                    <div class="match-header">
+                        <div class="match-info">Match ${fixture.num} • ${fixture.date} • ${fixture.time}</div>
+                        ${timeTagHTML}
+                    </div>
+                    <div class="results-layout">
+                        <div class="results-team ${homeClass}" onclick="selectNrrWinner(${originalIndex}, '${fixture.home}')" style="cursor:pointer">
+                            <img src="${teamLogos[fixture.home]}"><span class="team-abbr">${fixture.home}</span>
+                        </div>
+                        <div class="results-score-center">
+                            <div class="score-main">
+                                <div class="nrr-mode-inputs">
+                                    <input type="number" id="nrr-hr-${originalIndex}" class="nrr-mini-inp" placeholder="Runs" value="${fixture.tempHR !== undefined ? fixture.tempHR : (fixture.predictedHomeRuns || '')}" oninput="schedule[${originalIndex}].tempHR = this.value">
+                                    <input type="number" id="nrr-ho-${originalIndex}" class="nrr-mini-inp" placeholder="Overs" step="0.1" value="${fixture.tempHO !== undefined ? fixture.tempHO : (fixture.predictedHomeOvers || '')}" oninput="schedule[${originalIndex}].tempHO = this.value">
+                                </div>
+                                <div class="score-divider">VS</div>
+                                <div class="nrr-mode-inputs">
+                                    <input type="number" id="nrr-ar-${originalIndex}" class="nrr-mini-inp" placeholder="Runs" value="${fixture.tempAR !== undefined ? fixture.tempAR : (fixture.predictedAwayRuns || '')}" oninput="schedule[${originalIndex}].tempAR = this.value">
+                                    <input type="number" id="nrr-ao-${originalIndex}" class="nrr-mini-inp" placeholder="Overs" step="0.1" value="${fixture.tempAO !== undefined ? fixture.tempAO : (fixture.predictedAwayOvers || '')}" oninput="schedule[${originalIndex}].tempAO = this.value">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="results-team ${awayClass}" onclick="selectNrrWinner(${originalIndex}, '${fixture.away}')" style="cursor:pointer">
+                            <img src="${teamLogos[fixture.away]}"><span class="team-abbr">${fixture.away}</span>
+                        </div>
+                    </div>
+                    <div class="match-nr" style="gap:10px;">
+                        <button onclick="selectNrrWinner(${originalIndex}, 'NR')" class="${nrClass}">No Result</button>
+                        <button onclick="saveNrrMatch(${originalIndex})" class="add-btn">Add</button>
+                        <button onclick="resetMatch(${originalIndex})" style="min-width:auto; padding:0.4rem 1rem;">↺ Reset</button>
                     </div>
                 `;
             } else {
                 const homeClick = `onclick="handleButtonClick(${originalIndex}, '${fixture.home}')"`;
                 const awayClick = `onclick="handleButtonClick(${originalIndex}, '${fixture.away}')"`;
+                const nrClick   = `onclick="handleButtonClick(${originalIndex}, 'NR')"`;
+
                 div.innerHTML = `
-                    <div class="match-info">Match ${fixture.num} • ${fixture.date} • ${fixture.time}</div>
+                    <div class="match-header">
+                        <div class="match-info">Match ${fixture.num} • ${fixture.date} • ${fixture.time}</div>
+                        ${timeTagHTML}
+                    </div>
                     <div class="match-teams">
                         <div class="team-tile ${fixture.selectedWinner === fixture.home ? 'selected' : ''}" ${homeClick}>
                             <img src="${teamLogos[fixture.home]}"><span class="team-abbr">${fixture.home}</span>
@@ -373,12 +796,13 @@
                         </div>
                     </div>
                     <div class="match-nr">
-                        <button onclick="handleButtonClick(${originalIndex}, 'NR')" class="${fixture.selectedWinner === 'NR' ? 'selected' : ''}">No Result</button>
+                        <button ${nrClick} class="${fixture.selectedWinner === 'NR' ? 'selected' : ''}">No Result</button>
                     </div>
                 `;
             }
             matchList.appendChild(div);
         });
+
         if (matchCount === 0) matchList.innerHTML = `<div class="empty-message">There's nothing to display!</div>`;
     }
 
