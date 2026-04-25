@@ -27,7 +27,6 @@
             transition: background-color 0.3s, color 0.3s; max-width: 1600px; 
         }
 
-        /* Header & Navigation */
         .header-container { display: flex; justify-content: center; align-items: center; margin-bottom: 1rem; position: relative; width: 100%; }
         h1 { font-family: 'Montserrat', sans-serif; font-size: 2.25rem; font-weight: 700; margin: 0; color: var(--primary); text-align: center; }
 
@@ -35,7 +34,8 @@
         .theme-toggle-top { width: 42px; height: 42px; border: none; border-radius: 50%; background: var(--text); color: var(--background) !important; font-size: 1.15rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px var(--shadow); }
         .theme-toggle-top:hover { transform: translateY(-2px); filter: brightness(1.1); }
         
-        .nav-link { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.85rem; color: var(--primary); text-decoration: none; background: var(--tile-hover); padding: 8px 14px; border-radius: 8px; transition: all 0.2s; border: 1px solid transparent; display: flex; align-items: center; gap: 6px; }
+        .nav-link { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.85rem; color: var(--primary); text-decoration: none; background: var(--tile-hover); padding: 8px 14px; border-radius: 8px; transition: all 0.2s; border: 1px solid transparent; display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none;}
+        .nav-link * { pointer-events: none; }
         .nav-link:hover { background: var(--primary); color: white; border-color: var(--primary); }
         body.dark-theme .nav-link { color: #60a5fa; }
         body.dark-theme .nav-link:hover { color: #ffffff; }
@@ -43,7 +43,6 @@
         .master-reset-btn { display: block; margin: 0 auto 2rem; background-color: #ef4444 !important; color: #ffffff !important; border: none; padding: 10px 24px; border-radius: 8px; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 6px var(--shadow); }
         .master-reset-btn:hover { background-color: #dc2626 !important; transform: translateY(-2px); box-shadow: 0 6px 10px var(--shadow); }
 
-        /* Layout Grid */
         .dashboard-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 1.5rem; align-items: start; width: 100%; max-width: 100%; }
         .panel { display: flex; flex-direction: column; width: 100%; min-width: 0; }
         
@@ -52,7 +51,6 @@
         .info-btn { background: var(--tile-hover); color: var(--primary); border: 1px solid var(--primary); border-radius: 50%; width: 24px; height: 24px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .info-btn:hover { background: var(--primary); color: white; transform: scale(1.1); }
 
-        /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
         .modal-overlay.open { opacity: 1; pointer-events: auto; }
         .modal-content { background: var(--card); border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; transform: translateY(20px); transition: transform 0.2s; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border); }
@@ -66,13 +64,12 @@
         .modal-body li { margin-bottom: 6px; }
         .code-badge { background: var(--tile-hover); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; }
 
-        /* Tables & Responsiveness */
         .table-container { width: 100%; overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 6px -1px var(--shadow); background: var(--card); -webkit-overflow-scrolling: touch; margin-bottom: 1rem;}
         table { width: 100%; border-spacing: 0; font-size: 0.9rem; font-family: 'Poppins', sans-serif; text-align: center; min-width: max-content; }
         th { background: var(--primary); color: white; font-weight: 600; padding: 1rem 0.5rem; font-size: 0.85rem; white-space: nowrap; }
         td { padding: 0.75rem 0.5rem; border-bottom: 1px solid var(--border); vertical-align: middle; white-space: nowrap; }
         
-        #ptsTable th:nth-child(2), #nrrTable th:nth-child(1) { text-align: center; } 
+        #ptsTable th:nth-child(2), #nrrTable th:nth-child(1) { text-align: left; padding-left: 10px;} 
         #ptsTable td:nth-child(2) .team-name, #nrrTable td:nth-child(1) .team-name { justify-content: flex-start; padding-left: 10px; width: 110px; margin: 0 auto; }
         .team-name { display: flex; align-items: center; gap: 0.5rem; }
         .team-logo { width: 36px; height: 36px; object-fit: contain; }
@@ -96,7 +93,6 @@
         .change-pct.down { color: #ef4444 !important; }
         .change-pct.same { color: var(--text-muted) !important; }
 
-        /* Points Table Steppers */
         .stepper { display: flex; align-items: center; justify-content: center; gap: 4px; background: var(--background); border-radius: 6px; padding: 2px; border: 1px solid var(--border); width: max-content; margin: 0 auto; }
         .step-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .step-btn:hover { background: var(--tile-hover); color: var(--primary); border-color: var(--primary); }
@@ -104,7 +100,6 @@
         .val-badge { font-weight: 700; font-size: 1.05rem; color: var(--text); display: inline-block; width: 32px; text-align: center; }
         .pts-val-badge { font-weight: 700; font-size: 1.05rem; color: var(--primary); }
 
-        /* NRR Inputs */
         .nrr-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .stat-main { font-weight: 700; font-size: 1rem; color: var(--text); }
         .adj-inp { width: 45px; padding: 4px; font-size: 0.75rem; text-align: center; border-radius: 4px; border: 1px solid var(--border); background: var(--background); color: var(--text); font-family: 'Poppins', sans-serif; transition: all 0.2s; }
@@ -178,7 +173,7 @@
             <table id="nrrTable">
                 <thead>
                     <tr>
-                        <th title="Team" style="text-align: center;">Team</th>
+                        <th title="Team">Team</th>
                         <th title="Total Runs Scored">RS</th>
                         <th title="Total Overs Faced">OF</th>
                         <th title="Total Runs Conceded">RC</th>
@@ -204,7 +199,7 @@
                 <thead>
                     <tr>
                         <th>Pos</th>
-                        <th style="text-align: center;">Team</th>
+                        <th>Team</th>
                         <th title="Matches Played">MP</th>
                         <th title="Wins">W</th>
                         <th title="Losses">L</th>
@@ -378,7 +373,6 @@
                 t.NRR = calculateNRR(nData.runsScored, nData.oversFaced, nData.runsConceded, nData.oversBowled);
             });
 
-            // Simulate probabilities for base original data
             simulateMonteCarlo(originalPtsData);
             originalPtsData.forEach(t => {
                 t.originalTop4 = parseFloat(t.top4Chance) || 0;
@@ -408,9 +402,7 @@
             simTeams.forEach(t => teamMap[t.name] = t);
 
             for (let i = 0; i < remainingMatches.length; i++) {
-                const match = remainingMatches[i];
-                const random = Math.random();
-                
+                const match = remainingMatches[i], random = Math.random();
                 if (random < 0.49) teamMap[match.home].Pts += 2;
                 else if (random < 0.98) teamMap[match.away].Pts += 2;
                 else { teamMap[match.home].Pts += 1; teamMap[match.away].Pts += 1; }
@@ -494,7 +486,7 @@
             if (delta === -1 && t.NR > 0) t.NR--;
         }
         
-        t.L = t.P - t.W - t.NR; // Dynamically auto-calculate Losses
+        t.L = t.P - t.W - t.NR; 
         t.Pts = (t.W * 2) + t.NR;
         lastEditedTeam = teamName;
         
