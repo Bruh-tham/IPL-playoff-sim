@@ -36,45 +36,42 @@
         .theme-toggle-top { width: 42px; height: 42px; border: none; border-radius: 50%; background: var(--text); color: var(--background) !important; font-size: 1.15rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px var(--shadow); }
         .theme-toggle-top:hover { transform: translateY(-2px); filter: brightness(1.1); }
         
-        /* Fully Clickable Nav Link */
         .nav-link { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.85rem; color: var(--primary); text-decoration: none; background: var(--tile-hover); padding: 8px 14px; border-radius: 8px; transition: all 0.2s; border: 1px solid transparent; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
-        .nav-link * { pointer-events: none; } /* Ensures the entire box catches the click */
+        .nav-link * { pointer-events: none; }
         .nav-link:hover { background: var(--primary); color: white; border-color: var(--primary); }
         body.dark-theme .nav-link { color: #60a5fa; }
         body.dark-theme .nav-link:hover { color: #ffffff; }
 
-        /* Proportionally sized Table */
-        .table-container { width: 100%; overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 6px -1px var(--shadow); background: var(--card); margin: 0 auto 2rem; max-width: 900px;}
-        table { width: 100%; border-spacing: 0; font-size: 1.1rem; font-family: 'Poppins', sans-serif; text-align: center; min-width: max-content; }
+        /* Points Table */
+        .table-container { width: 100%; overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 6px -1px var(--shadow); background: var(--card); margin: 0 auto 2rem; max-width: 1000px;}
+        table { width: 100%; border-spacing: 0; font-size: 1.05rem; font-family: 'Poppins', sans-serif; text-align: center; min-width: max-content; }
         th { background: var(--primary); color: white; font-weight: 600; padding: 1rem 0.5rem; text-transform: uppercase; font-size: 0.95rem; }
         td { padding: 1rem 0.5rem; border-bottom: 1px solid var(--border); vertical-align: middle; white-space: nowrap; font-weight: 500;}
         
-        /* Left-aligned team column & Centered Header */
-        #pointsTable th:nth-child(1), #pointsTable td:nth-child(1) { width: 80px; }
-        #pointsTable th:nth-child(2) { text-align: left; padding-left: 20px; } 
-        #pointsTable td:nth-child(2) .team-name { justify-content: flex-start; padding-left: 10px; width: auto; margin: 0; }
-        .team-name { display: flex; align-items: center; gap: 12px; }
-        .team-logo { width: 40px; height: 40px; object-fit: contain; }
+        #pointsTable th:nth-child(2) { text-align: center; } 
+        #pointsTable td:nth-child(2) .team-name { justify-content: flex-start; padding-left: 15px; width: 130px; margin: 0 auto; }
+        .team-name { display: flex; align-items: center; gap: 0.75rem; }
+        .team-logo { width: 36px; height: 36px; object-fit: contain; }
 
         .nrr-positive { color: var(--success) !important; font-weight: 700; }
         .nrr-negative { color: #ef4444 !important; font-weight: 700; }
         .nrr-neutral { color: var(--text-muted) !important; font-weight: 700; }
 
-        .position-change { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.95rem; font-weight: 600; margin-left: 6px; }
+        .position-change { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.9rem; font-weight: 600; margin-left: 6px; }
         .position-up { color: var(--success) !important; }
         .position-down { color: #ef4444 !important; }
-        .position-arrow { font-size: 0.8rem; }
+        .position-arrow { font-size: 0.75rem; }
 
         .chance-high { color: var(--success) !important; font-weight: 600; }
         .chance-medium { color: var(--warning) !important; font-weight: 600; }
         .chance-low { color: #ef4444 !important; font-weight: 600; }
 
         .change-indicator { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
-        .change-pts { font-weight: 600; font-size: 1rem; }
+        .change-pts { font-weight: 600; font-size: 0.95rem; }
         .change-pts.positive { color: var(--success) !important; }
         .change-pts.negative { color: #ef4444 !important; }
         .change-pts.neutral { color: var(--text-muted) !important; }
-        .change-pct { font-size: 0.9rem; display: flex; align-items: center; gap: 2px; }
+        .change-pct { font-size: 0.85rem; display: flex; align-items: center; gap: 2px; }
         .change-pct.up { color: var(--success) !important; }
         .change-pct.down { color: #ef4444 !important; }
         .change-pct.same { color: var(--text-muted) !important; }
@@ -93,18 +90,16 @@
         .sort-container select { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--background); color: var(--text); font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 0.85rem; cursor: pointer; outline: none; }
         .sort-container select:focus { border-color: var(--primary); }
 
-        /* Enhanced Filter Row & NRR Toggle */
         .filter-header { text-align: center; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
         
         .controls-row { display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 2rem;}
         .team-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-bottom: 1rem; width: 100%; }
         
-        .filter-btn { background: transparent; border: 2px solid transparent; border-radius: 50%; width: 66px; height: 66px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; padding: 6px; }
-        .filter-btn img { width: 100%; height: 100%; object-fit: contain; transition: all 0.3s ease; display: block; margin: auto;}
-        .filter-btn.active { border-color: var(--primary); background: var(--tile-hover); transform: scale(1.05); }
+        .filter-btn { background: transparent; border: none; border-radius: 50%; width: 66px; height: 66px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; padding: 6px; }
+        .filter-btn img { width: 100%; height: 100%; object-fit: contain; transition: all 0.3s ease; display: block; margin: 0; padding: 0;}
+        .filter-btn.active { background: var(--tile-hover); transform: scale(1.05); }
         .filter-btn.dimmed img { opacity: 0.3; filter: grayscale(80%); }
 
-        /* Slider Toggle & Info */
         .nrr-toggle-container { display: flex; justify-content: flex-end; align-items: center; gap: 12px; width: 100%; max-width: 1000px; padding-right: 10px;}
         .toggle-label { font-family: 'Poppins', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--text); }
         .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
@@ -117,7 +112,7 @@
         .info-btn { background: var(--tile-hover); color: var(--primary); border: 1px solid var(--primary); border-radius: 50%; width: 24px; height: 24px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; margin-left: 4px; }
         .info-btn:hover { background: var(--primary); color: white; transform: scale(1.1); }
 
-        /* --- Modals --- */
+        /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
         .modal-overlay.open { opacity: 1; pointer-events: auto; }
         .modal-content { background: var(--card); border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; transform: translateY(20px); transition: transform 0.2s; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border); }
@@ -131,15 +126,16 @@
         .modal-body li { margin-bottom: 6px; }
         .code-badge { background: var(--tile-hover); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; }
 
-        /* --- Match Grid --- */
+        /* Dynamic Compact Match Grid */
         #matchList { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; width: 100%; }
         .match-row { 
-            background: var(--card); border-radius: 12px; padding: 1.2rem 1.2rem; margin: 0; 
+            background: var(--card); border-radius: 12px; padding: 1.2rem; margin: 0; 
             box-shadow: 0 4px 10px var(--shadow); width: 100%; max-width: 370px; 
             box-sizing: border-box; border: 1px solid var(--border); 
             display: flex; flex-direction: column; justify-content: center; 
             position: relative; height: auto;
         }
+        .match-row.is-result { max-width: 400px; padding: 1.5rem 1.2rem; }
 
         .match-header { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 12px; }
         .match-info { text-align: left; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; margin: 0; line-height: 1.4; }
@@ -150,14 +146,16 @@
         .time-tag.evening { background: #e0e7ff; color: #3730a3; }
         body.dark-theme .time-tag.evening { background: #1e3a8a; color: #dbeafe; }
 
-        /* Fixtures Mode */
+        /* Fixtures Mode Base Tile */
         .match-teams { display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 0; }
-        .team-tile { width: 90px; position: relative; cursor: pointer; padding: 0.5rem; border-radius: 10px; text-align: center; transition: all 0.2s ease; border: 2px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; background: transparent; }
-        .team-tile img { width: 56px; height: 56px; object-fit: contain; margin-bottom: 4px; flex-shrink: 0; transition: transform 0.2s ease; }
-        .team-abbr { font-weight: 600; font-size: 1rem; transition: color 0.2s; color: var(--text); }
+        
+        .team-tile { width: 90px; cursor: pointer; padding: 0.5rem; text-align: center; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; background: transparent; }
+        .team-tile img { width: 56px; height: 56px; object-fit: contain; margin-bottom: 8px; flex-shrink: 0; transition: transform 0.2s ease; display: block; }
+        .team-abbr { font-weight: 600; font-size: 1rem; transition: color 0.2s; color: var(--text); line-height: 1; }
+        
         .team-tile:not(.readonly):hover { background: var(--tile-hover); }
-        .team-tile.selected { background: transparent; border-color: var(--success); box-shadow: 0 0 15px rgba(34, 197, 94, 0.15), inset 0 0 0 1px var(--success); }
-        .team-tile.selected img { transform: scale(1.05); }
+        .team-tile.selected { background: transparent; }
+        .team-tile.selected img { transform: scale(1.15); }
         .team-tile.selected .team-abbr { color: var(--success); }
         
         .vs-text { font-weight: 700; opacity: 0.3; font-size: 0.85rem; }
@@ -174,25 +172,26 @@
 
         /* Results & NRR Mode Shared Layout */
         .results-layout { display: flex; justify-content: space-between; align-items: center; margin: 0; padding: 0; }
-        .results-team { display: flex; flex-direction: column; align-items: center; width: 80px; transition: all 0.3s ease; border: 2px solid transparent; border-radius: 10px; padding: 0.5rem; }
-        .results-team.winner { opacity: 1; border-color: var(--success); background: var(--tile-hover); box-shadow: 0 0 15px rgba(34, 197, 94, 0.15), inset 0 0 0 1px var(--success); }
-        .results-team.full-opacity { opacity: 1; }
-        .results-team:not(.winner):not(.full-opacity) { opacity: 0.4; }
         
-        .results-team img { width: 56px; height: 56px; object-fit: contain; margin-bottom: 4px; transition: transform 0.2s;}
-        .results-team.winner img { transform: scale(1.05); }
-        .results-team .team-abbr { font-weight: 700; font-size: 1rem; color: var(--text); }
+        /* Clean Team Column Structure */
+        .results-team { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 85px; transition: opacity 0.3s ease; background: transparent; padding: 0; cursor: default; }
+        .match-row.is-result .results-team.loser { opacity: 0.7; }
+        
+        /* Pure images, no box or border padding */
+        .results-team img { width: 56px; height: 56px; object-fit: contain; margin-bottom: 8px; transition: transform 0.2s ease; display: block; }
+        .results-team.winner img { transform: scale(1.15); }
+        .results-team .team-abbr { font-weight: 700; font-size: 1rem; color: var(--text); margin-top: 0; line-height: 1; }
         .results-team.winner .team-abbr { color: var(--success); }
         
-        .results-score-center { display: flex; flex-direction: column; align-items: center; flex-grow: 1; padding: 0 8px; }
-        .score-main { display: flex; align-items: flex-start; gap: 10px; }
+        .results-score-center { display: flex; flex-direction: column; align-items: center; flex-grow: 1; padding: 0 12px; gap: 8px; }
+        .score-main { display: flex; align-items: flex-start; gap: 16px; }
         .score-detail { text-align: center; display: flex; flex-direction: column; align-items: center; }
-        .score-detail .runs { font-size: 1.3rem; font-weight: 700; color: var(--text); line-height: 1.1; }
+        .score-detail .runs { font-size: 1.4rem; font-weight: 700; color: var(--text); line-height: 1.1; }
         .score-detail .overs { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin-top: 4px; white-space: nowrap; }
         .score-detail .super-over { font-size: 0.85rem; color: var(--text); font-weight: 700; margin-top: 2px; opacity: 0.9; white-space: nowrap;}
         .score-divider { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); opacity: 0.4; margin-top: 4px; }
         
-        .match-status-badge { font-size: 0.8rem; font-weight: 600; color: var(--primary); background: var(--tile-hover); padding: 6px 10px; border-radius: 6px; margin-top: 10px; text-align: center; line-height: 1.4; width: max-content; max-width: 100%; white-space: normal; word-break: break-word; height: auto; }
+        .match-status-badge { font-size: 0.8rem; font-weight: 600; color: var(--primary); background: var(--tile-hover); padding: 6px 10px; border-radius: 6px; margin-top: 8px; text-align: center; line-height: 1.4; width: max-content; max-width: 100%; white-space: normal; word-break: break-word; height: auto; }
 
         /* NRR Mode Inputs */
         .nrr-mode-inputs { display: flex; flex-direction: column; gap: 4px; align-items: center; }
@@ -225,12 +224,10 @@
             .nrr-toggle-container { padding-right: 0; justify-content: center; }
             .match-row { padding: 1rem; max-width: 340px; }
             .team-tile { width: 90px; padding: 0.5rem; }
-            .team-tile img, .results-team img { width: 52px; height: 52px; margin-bottom: 6px; }
             .team-abbr { font-size: 0.9rem; }
             .score-detail .runs { font-size: 1.2rem; }
             .score-detail .overs { font-size: 0.8rem; }
             table { font-size: 0.95rem; }
-            .team-logo { width: 32px; height: 32px; }
         }
 
         @media (max-width: 768px) {
@@ -241,10 +238,8 @@
             .filter-btn { width: 55px; height: 55px; }
             .nrr-toggle-container { padding-right: 0; justify-content: center; }
             .match-row { padding: 1.25rem 1rem; max-width: 100%; }
-            .team-tile img, .results-team img { width: 56px; height: 56px; }
             .score-detail .runs { font-size: 1.25rem; }
             table { font-size: 0.95rem; display: block; overflow-x: auto; white-space: nowrap; }
-            .team-logo { width: 32px; height: 32px; }
         }
     </style>
 </head>
@@ -635,18 +630,8 @@
         sortedTeams.forEach((team, index) => {
             const originalIndex = initialSortedTeams.indexOf(team.name);
             const positionChange = originalIndex - index;
-            
-            let posMarkup = `<span>${index + 1}</span>`;
-            if (positionChange !== 0) {
-                posMarkup = `
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
-                        <span>${index + 1}</span>
-                        <span class="position-change ${positionChange > 0 ? 'position-up' : 'position-down'}">
-                            <span class="position-arrow">${positionChange > 0 ? '▲' : '▼'}</span>${Math.abs(positionChange)}
-                        </span>
-                    </div>
-                `;
-            }
+            const positionDisplay = positionChange !== 0 ? 
+                `<span class="position-change ${positionChange > 0 ? 'position-up' : 'position-down'}"><span class="position-arrow">${positionChange > 0 ? '▲' : '▼'}</span>${Math.abs(positionChange)}</span>` : '';
 
             const originalTeam = initialTeams.find(t => t.name === team.name);
             const pointsGained = team.Pts - originalTeam.Pts;
@@ -654,7 +639,7 @@
 
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td style="font-weight:700">${posMarkup}</td>
+                <td style="font-weight:700">${index + 1} ${positionDisplay}</td>
                 <td><div class="team-name"><img src="${teamLogos[team.name]}" alt="${team.name}" class="team-logo"><span style="font-weight:600;">${team.name}</span></div></td>
                 <td>${team.P}</td><td>${team.W}</td><td>${team.L}</td><td>${team.NR || 0}</td>
                 <td class="${team.NRR > 0 ? 'nrr-positive' : team.NRR < 0 ? 'nrr-negative' : 'nrr-neutral'}">${team.NRR > 0 ? '+' : ''}${team.NRR.toFixed(3)}</td>
@@ -697,15 +682,16 @@
 
             matchCount++;
             const div = document.createElement("div");
-            const predictedCompleteClass = (fixture.completed && !fixture.isOfficial) ? 'completed' : '';
-            div.className = `match-row ${predictedCompleteClass}`;
+            const isResultMode = currentTab === 'results';
+            
+            div.className = `match-row ${(fixture.completed && !fixture.isOfficial) ? 'completed' : ''} ${isResultMode ? 'is-result' : ''}`;
             
             const isAfternoon = fixture.time && fixture.time.includes('3:30');
             const timeTagHTML = `<div class="time-tag ${isAfternoon ? 'afternoon' : 'evening'}">${isAfternoon ? 'AFTERNOON' : 'EVENING'}</div>`;
 
-            if (currentTab === 'results') {
-                let homeClass = fixture.selectedWinner === fixture.home ? 'winner full-opacity' : 'full-opacity';
-                let awayClass = fixture.selectedWinner === fixture.away ? 'winner full-opacity' : 'full-opacity';
+            if (isResultMode) {
+                let homeClass = fixture.selectedWinner === fixture.home ? 'winner full-opacity' : (fixture.selectedWinner === 'NR' ? 'full-opacity' : 'loser');
+                let awayClass = fixture.selectedWinner === fixture.away ? 'winner full-opacity' : (fixture.selectedWinner === 'NR' ? 'full-opacity' : 'loser');
                 const noResultStatus = fixture.selectedWinner === 'NR' ? 'Match Abandoned' : 'Completed';
 
                 div.innerHTML = `
@@ -740,8 +726,8 @@
                 `;
             } else if (nrrMode) {
                 let activeWinner = fixture.tempWinner !== undefined ? fixture.tempWinner : fixture.selectedWinner;
-                let homeClass = activeWinner === fixture.home ? 'winner full-opacity' : 'full-opacity';
-                let awayClass = activeWinner === fixture.away ? 'winner full-opacity' : 'full-opacity';
+                let homeClass = activeWinner === fixture.home ? 'selected' : '';
+                let awayClass = activeWinner === fixture.away ? 'selected' : '';
                 const nrClass = activeWinner === 'NR' ? 'selected' : '';
 
                 div.innerHTML = `
@@ -750,7 +736,7 @@
                         ${timeTagHTML}
                     </div>
                     <div class="results-layout">
-                        <div class="results-team ${homeClass}" onclick="selectNrrWinner(${originalIndex}, '${fixture.home}')" style="cursor:pointer">
+                        <div class="team-tile ${homeClass}" onclick="selectNrrWinner(${originalIndex}, '${fixture.home}')" style="cursor:pointer; width: 85px;">
                             <img src="${teamLogos[fixture.home]}"><span class="team-abbr">${fixture.home}</span>
                         </div>
                         <div class="results-score-center">
@@ -766,7 +752,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="results-team ${awayClass}" onclick="selectNrrWinner(${originalIndex}, '${fixture.away}')" style="cursor:pointer">
+                        <div class="team-tile ${awayClass}" onclick="selectNrrWinner(${originalIndex}, '${fixture.away}')" style="cursor:pointer; width: 85px;">
                             <img src="${teamLogos[fixture.away]}"><span class="team-abbr">${fixture.away}</span>
                         </div>
                     </div>
