@@ -42,41 +42,40 @@
         body.dark-theme .nav-link { color: #60a5fa; }
         body.dark-theme .nav-link:hover { color: #ffffff; }
 
-        /* Points Table */
-        .table-container { width: 100%; overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 6px -1px var(--shadow); background: var(--card); margin: 0 auto 2rem; max-width: 1000px;}
-        table { width: 100%; border-spacing: 0; font-size: 1.05rem; font-family: 'Poppins', sans-serif; text-align: center; min-width: max-content; }
+        .table-container { width: 100%; overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 6px -1px var(--shadow); background: var(--card); margin: 0 auto 2rem; max-width: 900px;}
+        table { width: 100%; border-spacing: 0; font-size: 1.1rem; font-family: 'Poppins', sans-serif; text-align: center; min-width: max-content; }
         th { background: var(--primary); color: white; font-weight: 600; padding: 1rem 0.5rem; text-transform: uppercase; font-size: 0.95rem; }
         td { padding: 1rem 0.5rem; border-bottom: 1px solid var(--border); vertical-align: middle; white-space: nowrap; font-weight: 500;}
         
-        #pointsTable th:nth-child(2) { text-align: center; } 
-        #pointsTable td:nth-child(2) .team-name { justify-content: flex-start; padding-left: 15px; width: 130px; margin: 0 auto; }
-        .team-name { display: flex; align-items: center; gap: 0.75rem; }
-        .team-logo { width: 36px; height: 36px; object-fit: contain; }
+        #pointsTable th:nth-child(1), #pointsTable td:nth-child(1) { width: 80px; }
+        #pointsTable th:nth-child(2) { text-align: left; padding-left: 20px; } 
+        #pointsTable td:nth-child(2) .team-name { justify-content: flex-start; padding-left: 10px; width: auto; margin: 0; }
+        .team-name { display: flex; align-items: center; gap: 12px; }
+        .team-logo { width: 40px; height: 40px; object-fit: contain; }
 
         .nrr-positive { color: var(--success) !important; font-weight: 700; }
         .nrr-negative { color: #ef4444 !important; font-weight: 700; }
         .nrr-neutral { color: var(--text-muted) !important; font-weight: 700; }
 
-        .position-change { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.9rem; font-weight: 600; margin-left: 6px; }
+        .position-change { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.95rem; font-weight: 600; margin-left: 6px; }
         .position-up { color: var(--success) !important; }
         .position-down { color: #ef4444 !important; }
-        .position-arrow { font-size: 0.75rem; }
+        .position-arrow { font-size: 0.8rem; }
 
         .chance-high { color: var(--success) !important; font-weight: 600; }
         .chance-medium { color: var(--warning) !important; font-weight: 600; }
         .chance-low { color: #ef4444 !important; font-weight: 600; }
 
         .change-indicator { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
-        .change-pts { font-weight: 600; font-size: 0.95rem; }
+        .change-pts { font-weight: 600; font-size: 1rem; }
         .change-pts.positive { color: var(--success) !important; }
         .change-pts.negative { color: #ef4444 !important; }
         .change-pts.neutral { color: var(--text-muted) !important; }
-        .change-pct { font-size: 0.85rem; display: flex; align-items: center; gap: 2px; }
+        .change-pct { font-size: 0.9rem; display: flex; align-items: center; gap: 2px; }
         .change-pct.up { color: var(--success) !important; }
         .change-pct.down { color: #ef4444 !important; }
         .change-pct.same { color: var(--text-muted) !important; }
 
-        /* Simulator Header & Dropdown */
         .simulator { max-width: 1100px; width: 100%; margin: 0 auto; padding: 10px 0; display: flex; flex-direction: column; align-items: center; font-family: 'Poppins', sans-serif; }
         .schedule-header { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1.5rem; width: 100%; }
         .schedule-header h2 { color: var(--text); margin: 0; font-size: 1.75rem; text-align: center; }
@@ -126,16 +125,16 @@
         .modal-body li { margin-bottom: 6px; }
         .code-badge { background: var(--tile-hover); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; }
 
-        /* Dynamic Compact Match Grid */
+        /* Dynamic Match Grid */
         #matchList { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; width: 100%; }
         .match-row { 
             background: var(--card); border-radius: 12px; padding: 1.2rem; margin: 0; 
-            box-shadow: 0 4px 10px var(--shadow); width: 100%; max-width: 370px; 
+            box-shadow: 0 4px 10px var(--shadow); width: 100%; max-width: 360px; 
             box-sizing: border-box; border: 1px solid var(--border); 
             display: flex; flex-direction: column; justify-content: center; 
-            position: relative; height: auto;
+            position: relative; height: auto; transition: all 0.2s;
         }
-        .match-row.is-result { max-width: 400px; padding: 1.5rem 1.2rem; }
+        .match-row.is-result { max-width: 390px; padding: 1.5rem 1.2rem; }
 
         .match-header { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 12px; }
         .match-info { text-align: left; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; margin: 0; line-height: 1.4; }
@@ -146,14 +145,16 @@
         .time-tag.evening { background: #e0e7ff; color: #3730a3; }
         body.dark-theme .time-tag.evening { background: #1e3a8a; color: #dbeafe; }
 
-        /* Fixtures Mode Base Tile */
+        /* Fixtures Mode Tile (Clean PNGs) */
         .match-teams { display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 0; }
         
-        .team-tile { width: 90px; cursor: pointer; padding: 0.5rem; text-align: center; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; background: transparent; }
-        .team-tile img { width: 56px; height: 56px; object-fit: contain; margin-bottom: 8px; flex-shrink: 0; transition: transform 0.2s ease; display: block; }
+        .team-tile { width: 90px; position: relative; cursor: pointer; padding: 0.5rem; text-align: center; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; background: transparent; }
+        .team-tile img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 8px; flex-shrink: 0; transition: transform 0.2s ease; display: block; }
         .team-abbr { font-weight: 600; font-size: 1rem; transition: color 0.2s; color: var(--text); line-height: 1; }
         
-        .team-tile:not(.readonly):hover { background: var(--tile-hover); }
+        .team-tile:not(.readonly):hover { background: var(--tile-hover); border-radius: 10px; }
+        
+        /* Highlight Winner (No box, no glow, just scale & color) */
         .team-tile.selected { background: transparent; }
         .team-tile.selected img { transform: scale(1.15); }
         .team-tile.selected .team-abbr { color: var(--success); }
@@ -173,11 +174,10 @@
         /* Results & NRR Mode Shared Layout */
         .results-layout { display: flex; justify-content: space-between; align-items: center; margin: 0; padding: 0; }
         
-        /* Clean Team Column Structure */
         .results-team { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 85px; transition: opacity 0.3s ease; background: transparent; padding: 0; cursor: default; }
         .match-row.is-result .results-team.loser { opacity: 0.7; }
         
-        /* Pure images, no box or border padding */
+        /* Clean PNGs for Results */
         .results-team img { width: 56px; height: 56px; object-fit: contain; margin-bottom: 8px; transition: transform 0.2s ease; display: block; }
         .results-team.winner img { transform: scale(1.15); }
         .results-team .team-abbr { font-weight: 700; font-size: 1rem; color: var(--text); margin-top: 0; line-height: 1; }
@@ -223,7 +223,9 @@
             .filter-btn { width: 55px; height: 55px; padding: 5px; }
             .nrr-toggle-container { padding-right: 0; justify-content: center; }
             .match-row { padding: 1rem; max-width: 340px; }
-            .team-tile { width: 90px; padding: 0.5rem; }
+            .match-row.is-result { max-width: 370px; padding: 1.25rem; }
+            .team-tile img { width: 46px; height: 46px; }
+            .results-team img { width: 50px; height: 50px; }
             .team-abbr { font-size: 0.9rem; }
             .score-detail .runs { font-size: 1.2rem; }
             .score-detail .overs { font-size: 0.8rem; }
@@ -238,6 +240,9 @@
             .filter-btn { width: 55px; height: 55px; }
             .nrr-toggle-container { padding-right: 0; justify-content: center; }
             .match-row { padding: 1.25rem 1rem; max-width: 100%; }
+            .match-row.is-result { max-width: 100%; padding: 1.5rem 1rem; }
+            .team-tile img { width: 50px; height: 50px; }
+            .results-team img { width: 54px; height: 54px; }
             .score-detail .runs { font-size: 1.25rem; }
             table { font-size: 0.95rem; display: block; overflow-x: auto; white-space: nowrap; }
         }
@@ -391,10 +396,16 @@
         let balls = parts.length > 1 ? parseInt(parts[1]) || 0 : 0;
         return fullOvers + (balls / 6);
     }
-    function parseRuns(scoreStr) {
-        if (!scoreStr) return 0;
-        return parseInt(scoreStr.split('/')[0]) || 0;
+    
+    function parseRuns(scoreStr, adj = 0) {
+        if (scoreStr === undefined || scoreStr === null || scoreStr === "") return 0;
+        let base = parseInt(String(scoreStr).split('/')[0], 10);
+        if (isNaN(base)) base = 0;
+        let adjustment = parseInt(adj, 10);
+        if (isNaN(adjustment)) adjustment = 0;
+        return base + adjustment;
     }
+    
     function calculateNRR(rs, of, rc, ob) {
         if (of === 0 || ob === 0) return 0;
         return (rs / of) - (rc / ob);
@@ -403,6 +414,7 @@
     async function loadData() {
         try {
             const response = await fetch('data.json');
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
             
             initialTeams = data.teams.map(team => ({ ...team, Pts: (team.W * 2) + (team.NR || 0) }));
@@ -414,11 +426,16 @@
             
             data.schedule.filter(m => m.isOfficial && m.completed).forEach(match => {
                 if (match.selectedWinner !== "NR") {
-                    let homeR = parseRuns(match.homeScore), awayR = parseRuns(match.awayScore);
-                    let homeOvStr = match.homeOvers, awayOvStr = match.awayOvers;
+                    let homeR = parseRuns(match.homeScore, match.homeAdj);
+                    let awayR = parseRuns(match.awayScore, match.awayAdj);
+                    let homeOvStr = match.homeOvers;
+                    let awayOvStr = match.awayOvers;
 
-                    if (match.homeScore && (match.homeScore.includes("/10") || (!match.homeScore.includes("/") && parseFloat(homeOvStr) < 20))) { homeOvStr = "20.0"; }
-                    if (match.awayScore && (match.awayScore.includes("/10") || (!match.awayScore.includes("/") && parseFloat(awayOvStr) < 20))) { awayOvStr = "20.0"; }
+                    let hScore = String(match.homeScore || "");
+                    let aScore = String(match.awayScore || "");
+
+                    if (hScore && (hScore.includes("/10") || (!hScore.includes("/") && parseFloat(homeOvStr) < 20))) { homeOvStr = "20.0"; }
+                    if (aScore && (aScore.includes("/10") || (!aScore.includes("/") && parseFloat(awayOvStr) < 20))) { awayOvStr = "20.0"; }
 
                     if(originalNrrData[match.home]) {
                         originalNrrData[match.home].runsScored += homeR; originalNrrData[match.home].oversFaced += parseOvers(homeOvStr);
@@ -440,7 +457,11 @@
             
             renderFilters(); renderTable(); renderSchedule();
         } catch (error) {
-            document.getElementById('matchList').innerHTML = `<div class="empty-message">Error loading data.json. Make sure you are running a local web server!</div>`;
+            console.error("Error loading JSON:", error);
+            const msg = error.message.includes('JSON') 
+                ? `JSON Syntax Error: Please check data.json for missing quotes or trailing commas. <br><small>(${error.message})</small>` 
+                : `Error loading data.json. Ensure server is running. <br><small>(${error.message})</small>`;
+            document.getElementById('matchList').innerHTML = `<div class="empty-message">${msg}</div>`;
         }
     }
 
