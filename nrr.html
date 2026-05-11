@@ -199,7 +199,7 @@
                 <thead>
                     <tr>
                         <th>Pos</th>
-                        <th>Team</th>
+                        <th style="text-align: center;">Team</th>
                         <th title="Matches Played">MP</th>
                         <th title="Wins">W</th>
                         <th title="Losses">L</th>
@@ -325,9 +325,13 @@
         return `${fullOvers}.${balls}`;
     }
     
-    function parseRuns(scoreStr) {
-        if (!scoreStr) return 0;
-        return parseInt(scoreStr.split('/')[0]) || 0;
+    function parseRuns(scoreStr, adj = 0) {
+        if (scoreStr === undefined || scoreStr === null || scoreStr === "") return 0;
+        let base = parseInt(String(scoreStr).split('/')[0], 10);
+        if (isNaN(base)) base = 0;
+        let adjustment = parseInt(adj, 10);
+        if (isNaN(adjustment)) adjustment = 0;
+        return base + adjustment;
     }
     
     function calculateNRR(rs, of, rc, ob) {
@@ -338,24 +342,30 @@
     async function loadData() {
         try {
             const response = await fetch('data.json');
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
             
-            schedule = data.schedule;
+            schedule = data.schedule || [];
 
-            originalPtsData = data.teams.map(team => {
+            originalPtsData = (data.teams || []).map(team => {
                 let resolvedNR = team.NR !== undefined ? team.NR : 0;
                 return { ...team, NR: resolvedNR, Pts: (team.W * 2) + resolvedNR, L: team.P - team.W - resolvedNR };
             });
 
             Object.keys(teamLogos).forEach(team => { originalNrrData[team] = { runsScored: 0, oversFaced: 0, runsConceded: 0, oversBowled: 0 }; });
 
-            data.schedule.filter(m => m.isOfficial && m.completed).forEach(match => {
+            schedule.filter(m => m.isOfficial && m.completed).forEach(match => {
                 if (match.selectedWinner !== "NR") {
-                    let homeR = parseRuns(match.homeScore), awayR = parseRuns(match.awayScore);
-                    let homeOvStr = match.homeOvers, awayOvStr = match.awayOvers;
+                    let homeR = parseRuns(match.homeScore, match.homeAdj);
+                    let awayR = parseRuns(match.awayScore, match.awayAdj);
+                    let homeOvStr = match.homeOvers;
+                    let awayOvStr = match.awayOvers;
 
-                    if (match.homeScore && (match.homeScore.includes("/10") || (!match.homeScore.includes("/") && parseFloat(homeOvStr) < 20))) { homeOvStr = "20.0"; }
-                    if (match.awayScore && (match.awayScore.includes("/10") || (!match.awayScore.includes("/") && parseFloat(awayOvStr) < 20))) { awayOvStr = "20.0"; }
+                    let hScore = String(match.homeScore || "");
+                    let aScore = String(match.awayScore || "");
+
+                    if (hScore && (hScore.includes("/10") || (!hScore.includes("/") && parseFloat(homeOvStr) < 20))) { homeOvStr = "20.0"; }
+                    if (aScore && (aScore.includes("/10") || (!aScore.includes("/") && parseFloat(awayOvStr) < 20))) { awayOvStr = "20.0"; }
 
                     if(originalNrrData[match.home]) {
                         originalNrrData[match.home].runsScored += homeR; originalNrrData[match.home].oversFaced += parseOvers(homeOvStr);
@@ -369,7 +379,7 @@
             });
 
             originalPtsData.forEach(t => {
-                const nData = originalNrrData[t.name];
+                const nData = originalNrrData[t.name] || { runsScored: 0, oversFaced: 0, runsConceded: 0, oversBowled: 0 };
                 t.NRR = calculateNRR(nData.runsScored, nData.oversFaced, nData.runsConceded, nData.oversBowled);
             });
 
@@ -384,8 +394,13 @@
 
             resetAllData();
         } catch (error) {
-            document.querySelector("#ptsTable tbody").innerHTML = `<tr><td colspan="12" class="nrr-negative">Unable to load data.json. Ensure server is running.</td></tr>`;
-            document.querySelector("#nrrTable tbody").innerHTML = `<tr><td colspan="8" class="nrr-negative">Unable to load data.json. Ensure server is running.</td></tr>`;
+            console.error("Error loading JSON:", error);
+            const msg = error.message.includes('JSON') 
+                ? `JSON Syntax Error: Please check data.json for missing quotes or trailing commas. <br><small>(${error.message})</small>` 
+                : `Error loading data.json. Ensure server is running. <br><small>(${error.message})</small>`;
+            
+            document.querySelector("#ptsTable tbody").innerHTML = `<tr><td colspan="12" class="nrr-negative">${msg}</td></tr>`;
+            document.querySelector("#nrrTable tbody").innerHTML = `<tr><td colspan="8" class="nrr-negative">${msg}</td></tr>`;
         }
     }
 
