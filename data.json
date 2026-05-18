@@ -1,14 +1,14 @@
 {
   "teams": [
     { "name": "CSK", "P": 12, "W": 6, "L": 6, "NR": 0, "NRR": 0.027, "top4Chance": 0, "top2Chance": 0 },
-    { "name": "DC", "P": 12, "W": 5, "L": 7, "NR": 0, "NRR": -0.993, "top4Chance": 0, "top2Chance": 0 },
+    { "name": "DC", "P": 13, "W": 6, "L": 7, "NR": 0, "NRR": -0.871, "top4Chance": 0, "top2Chance": 0 },
     { "name": "GT", "P": 13, "W": 8, "L": 5, "NR": 0, "NRR": 0.400, "top4Chance": 0, "top2Chance": 0 },
     { "name": "KKR", "P": 12, "W": 5, "L": 6, "NR": 1, "NRR": -0.038, "top4Chance": 0, "top2Chance": 0 },
     { "name": "LSG", "P": 12, "W": 4, "L": 8, "NR": 0, "NRR": -0.701, "top4Chance": 0, "top2Chance": 0 },
     { "name": "MI", "P": 12, "W": 4, "L": 8, "NR": 0, "NRR": -0.504, "top4Chance": 0, "top2Chance": 0 },
-    { "name": "PBKS", "P": 12, "W": 6, "L": 5, "NR": 1, "NRR": 0.355, "top4Chance": 0, "top2Chance": 0 },
-    { "name": "RCB", "P": 12, "W": 8, "L": 4, "NR": 0, "NRR": 1.065,"top4Chance": 0, "top2Chance": 0 },
-    { "name": "RR", "P": 11, "W": 6, "L": 5, "NR": 0, "NRR": 0.082, "top4Chance": 0, "top2Chance": 0 },
+    { "name": "PBKS", "P": 13, "W": 6, "L": 6, "NR": 1, "NRR": 0.227, "top4Chance": 0, "top2Chance": 0 },
+    { "name": "RCB", "P": 13, "W": 9, "L": 4, "NR": 0, "NRR": 1.065,"top4Chance": 0, "top2Chance": 0 },
+    { "name": "RR", "P": 12, "W": 6, "L": 6, "NR": 0, "NRR": 0.027, "top4Chance": 0, "top2Chance": 0 },
     { "name": "SRH", "P": 12, "W": 7, "L": 5, "NR": 0, "NRR": 0.331, "top4Chance": 0, "top2Chance": 0 }
   ],
   "schedule": [
@@ -72,8 +72,8 @@
     { "num": 58, "date": "14-05-2026", "time": "7:30 PM", "home": "PBKS", "away": "MI", "isOfficial": true, "completed": true, "selectedWinner": "MI", "homeScore": "200/8", "homeOvers": "20", "awayScore": "205/4", "awayOvers": "19.5", "matchResult": "MI Won by 6 Wickets"},
     { "num": 59, "date": "15-05-2026", "time": "7:30 PM", "home": "LSG", "away": "CSK", "isOfficial": true, "completed": true, "selectedWinner": "LSG", "homeScore": "188/3", "homeOvers": "16.4", "awayScore": "187/5", "awayOvers": "20", "matchResult": "LSG Won by 7 Wickets"},
     { "num": 60, "date": "16-05-2026", "time": "7:30 PM", "home": "KKR", "away": "GT", "isOfficial": true, "completed": true, "selectedWinner": "KKR", "homeScore": "247/2", "homeOvers": "20", "awayScore": "218/4", "awayOvers": "20", "matchResult": "KKR Won by 29 Runs"},
-    { "num": 61, "date": "17-05-2026", "time": "3:30 PM", "home": "PBKS", "away": "RCB", "isOfficial": false, "completed": false, "selectedWinner": null, "homeScore": "", "homeOvers": "", "awayScore": "", "awayOvers": "", "matchResult": ""},
-    { "num": 62, "date": "17-05-2026", "time": "7:30 PM", "home": "DC", "away": "RR", "isOfficial": false, "completed": false, "selectedWinner": null, "homeScore": "", "homeOvers": "", "awayScore": "", "awayOvers": "", "matchResult": ""},
+    { "num": 61, "date": "17-05-2026", "time": "3:30 PM", "home": "PBKS", "away": "RCB", "isOfficial": true, "completed": true, "selectedWinner": "RCB", "homeScore": "199/8", "homeOvers": "20", "awayScore": "222/4", "awayOvers": "20", "matchResult": "RCB Won by 23 Runs"},
+    { "num": 62, "date": "17-05-2026", "time": "7:30 PM", "home": "DC", "away": "RR", "isOfficial": true, "completed": true, "selectedWinner": "DC", "homeScore": "197/5", "homeOvers": "19.2", "awayScore": "193/8", "awayOvers": "20", "matchResult": "DC Won by 5 Wickets"},
     { "num": 63, "date": "18-05-2026", "time": "7:30 PM", "home": "CSK", "away": "SRH", "isOfficial": false, "completed": false, "selectedWinner": null, "homeScore": "", "homeOvers": "", "awayScore": "", "awayOvers": "", "matchResult": ""},
     { "num": 64, "date": "19-05-2026", "time": "7:30 PM", "home": "RR", "away": "LSG", "isOfficial": false, "completed": false, "selectedWinner": null, "homeScore": "", "homeOvers": "", "awayScore": "", "awayOvers": "", "matchResult": ""},
     { "num": 65, "date": "20-05-2026", "time": "7:30 PM", "home": "KKR", "away": "MI", "isOfficial": false, "completed": false, "selectedWinner": null, "homeScore": "", "homeOvers": "", "awayScore": "", "awayOvers": "", "matchResult": ""},
