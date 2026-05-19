@@ -47,6 +47,16 @@
         th { background: var(--primary); color: white; font-weight: 600; padding: 1rem 0.5rem; text-transform: uppercase; font-size: 0.95rem; }
         td { padding: 1rem 0.5rem; border-bottom: 1px solid var(--border); vertical-align: middle; white-space: nowrap; font-weight: 500;}
         
+        .status-badge { 
+            display: inline-flex; align-items: center; justify-content: center; 
+            width: 18px; height: 18px; border-radius: 50%; 
+            font-size: 0.7rem; font-weight: 800; margin-left: 6px; 
+            color: white; line-height: 1; font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+        .status-q { background-color: var(--success); }
+        .status-e { background-color: #ef4444; }
+
         #pointsTable th:nth-child(1), #pointsTable td:nth-child(1) { width: 80px; }
         #pointsTable th:nth-child(2) { text-align: left; padding-left: 20px; } 
         #pointsTable td:nth-child(2) .team-name { justify-content: flex-start; padding-left: 10px; width: auto; margin: 0; }
@@ -388,6 +398,7 @@
     let initialSortedTeams = null, activeFilters = new Set();
     let currentTab = 'fixtures', nrrMode = false;
     let originalNrrData = {};
+    let currentNrrState = {}; // Tracks live NRR state for advanced Monte Carlo
 
     function parseOvers(overString) {
         if (!overString) return 0;
@@ -418,7 +429,7 @@
             const data = await response.json();
             
             initialTeams = data.teams.map(team => ({ ...team, Pts: (team.W * 2) + (team.NR || 0) }));
-            initialSchedule = data.schedule;
+            initialSchedule = data.schedule || [];
             teams = JSON.parse(JSON.stringify(initialTeams));
             schedule = JSON.parse(JSON.stringify(initialSchedule));
 
@@ -448,7 +459,10 @@
                 }
             });
 
+            // Calculate current live state & baseline simulations
+            recalculateStandings(); 
             simulateMonteCarlo();
+            
             initialTeams.forEach(team => {
                 const simTeam = teams.find(t => t.name === team.name);
                 team.originalTop4 = parseFloat(simTeam.top4Chance) || 0;
@@ -516,6 +530,8 @@
             }
         });
 
+        currentNrrState = tempNrrData;
+
         teams.forEach(t => {
             if (tempNrrData[t.name]) {
                 t.NRR = calculateNRR(tempNrrData[t.name].runsScored, tempNrrData[t.name].oversFaced, tempNrrData[t.name].runsConceded, tempNrrData[t.name].oversBowled);
@@ -523,26 +539,82 @@
         });
     }
 
-    function simulateMonteCarlo(numSimulations = 10000) {
+    function simulateMonteCarlo(numSimulations = 50000) {
         const top4Count = {}, top2Count = {};
         teams.forEach(t => { top4Count[t.name] = 0; top2Count[t.name] = 0; });
         const remainingMatches = schedule.filter(m => !m.completed);
-        const baseTeamsArray = teams.map(t => ({ name: t.name, Pts: t.Pts, NRR: t.NRR }));
 
         for (let sim = 0; sim < numSimulations; sim++) {
-            let simTeams = baseTeamsArray.map(t => ({...t})), teamMap = {};
+            let simTeams = teams.map(t => ({ name: t.name, Pts: t.Pts }));
+            let teamMap = {};
             simTeams.forEach(t => teamMap[t.name] = t);
 
+            // Fast deep clone of current exact NRR base
+            let simNrrData = {};
+            Object.keys(currentNrrState).forEach(team => {
+                simNrrData[team] = {
+                    runsScored: currentNrrState[team].runsScored,
+                    oversFaced: currentNrrState[team].oversFaced,
+                    runsConceded: currentNrrState[team].runsConceded,
+                    oversBowled: currentNrrState[team].oversBowled
+                };
+            });
+
+            // Advanced NRR Dynamics: Mathematically simulate runs & margins
             for (let i = 0; i < remainingMatches.length; i++) {
                 const match = remainingMatches[i], random = Math.random();
-                if (random < 0.49) teamMap[match.home].Pts += 2;
-                else if (random < 0.98) teamMap[match.away].Pts += 2;
-                else { teamMap[match.home].Pts += 1; teamMap[match.away].Pts += 1; }
+                let winnerName = null, loserName = null;
+
+                if (random < 0.49) { winnerName = match.home; loserName = match.away; }
+                else if (random < 0.98) { winnerName = match.away; loserName = match.home; }
+                else { teamMap[match.home].Pts += 1; teamMap[match.away].Pts += 1; continue; }
+
+                teamMap[winnerName].Pts += 2;
+
+                // Improved margin generation for realistic IPL NRR swings
+                if (Math.random() < 0.5) {
+                    // Batting first win (Run Margin)
+                    // Power curve favors tight margins but allows massive 100+ run blowouts
+                    let runMargin = Math.floor(Math.pow(Math.random(), 2.5) * 120) + 1; 
+                    let target = Math.floor(Math.random() * 60) + 160; 
+                    
+                    simNrrData[winnerName].runsScored += target;
+                    simNrrData[winnerName].oversFaced += 20;
+                    simNrrData[winnerName].runsConceded += (target - runMargin);
+                    simNrrData[winnerName].oversBowled += 20;
+
+                    simNrrData[loserName].runsScored += (target - runMargin);
+                    simNrrData[loserName].oversFaced += 20;
+                    simNrrData[loserName].runsConceded += target;
+                    simNrrData[loserName].oversBowled += 20;
+                } else {
+                    // Chasing win (Balls Remaining Margin)
+                    let ballsRemaining = Math.floor(Math.pow(Math.random(), 2.5) * 70) + 1; 
+                    let target = Math.floor(Math.random() * 60) + 150; 
+                    let oversFaced = (120 - ballsRemaining) / 6;
+
+                    simNrrData[winnerName].runsScored += target + Math.floor(Math.random() * 4);
+                    simNrrData[winnerName].oversFaced += oversFaced;
+                    simNrrData[winnerName].runsConceded += target;
+                    simNrrData[winnerName].oversBowled += 20;
+
+                    simNrrData[loserName].runsScored += target;
+                    simNrrData[loserName].oversFaced += 20;
+                    simNrrData[loserName].runsConceded += target + Math.floor(Math.random() * 4);
+                    simNrrData[loserName].oversBowled += oversFaced;
+                }
             }
 
+            // Calculate exact simulated NRR
+            simTeams.forEach(t => {
+                let d = simNrrData[t.name];
+                t.simNRR = (d.runsScored / d.oversFaced) - (d.runsConceded / d.oversBowled);
+            });
+
+            // Sort purely on exact points and precise NRR (Removed artificial jitter completely)
             simTeams.sort((a, b) => {
                 if (b.Pts !== a.Pts) return b.Pts - a.Pts;
-                return (b.NRR + (Math.random() * 0.4 - 0.2)) - (a.NRR + (Math.random() * 0.4 - 0.2));
+                return b.simNRR - a.simNRR; 
             });
 
             for(let i=0; i<4; i++) {
@@ -558,7 +630,6 @@
             team.top2Chance = ((top2Count[team.name] / numSimulations) * 100).toFixed(2);
         });
     }
-
     function handleButtonClick(index, winner) {
         const fixture = schedule[index];
         if (fixture.isOfficial) return; 
@@ -658,10 +729,18 @@
             const pointsGained = team.Pts - originalTeam.Pts;
             const pctChange = (parseFloat(team.top4Chance) - (originalTeam.originalTop4 || 0)).toFixed(2);
 
+            // --- NEW QUALIFICATION LOGIC ---
+            let statusTag = '';
+            if (team.top4Chance === "100.00") {
+                statusTag = `<span class="status-badge status-q" title="Qualified">Q</span>`;
+            } else if (team.top4Chance === "0.00") {
+                statusTag = `<span class="status-badge status-e" title="Eliminated">E</span>`;
+            }
+
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td style="font-weight:700">${index + 1} ${positionDisplay}</td>
-                <td><div class="team-name"><img src="${teamLogos[team.name]}" alt="${team.name}" class="team-logo"><span style="font-weight:600;">${team.name}</span></div></td>
+                <td><div class="team-name"><img src="${teamLogos[team.name]}" alt="${team.name}" class="team-logo"><span style="font-weight:600;">${team.name}</span>${statusTag}</div></td>
                 <td>${team.P}</td><td>${team.W}</td><td>${team.L}</td><td>${team.NR || 0}</td>
                 <td class="${team.NRR > 0 ? 'nrr-positive' : team.NRR < 0 ? 'nrr-negative' : 'nrr-neutral'}">${team.NRR > 0 ? '+' : ''}${team.NRR.toFixed(3)}</td>
                 <td style="color:var(--primary); font-weight:700">${team.Pts}</td>
