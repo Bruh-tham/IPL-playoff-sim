@@ -410,22 +410,74 @@
         teamsArray.forEach(t => { top4Count[t.name] = 0; top2Count[t.name] = 0; });
 
         const remainingMatches = schedule.filter(m => !m.completed);
-        const baseTeamsArray = teamsArray.map(t => ({ name: t.name, Pts: t.Pts, NRR: t.NRR }));
+        const baseTeamsArray = teamsArray.map(t => ({ name: t.name, Pts: t.Pts }));
 
         for (let sim = 0; sim < numSimulations; sim++) {
             let simTeams = baseTeamsArray.map(t => ({...t})), teamMap = {};
             simTeams.forEach(t => teamMap[t.name] = t);
 
+            let simNrrData = {};
+            // Fallback: Use live nrrData if populated, otherwise use the baseline originalNrrData during initial load
+            const activeNrrState = Object.keys(nrrData).length > 0 ? nrrData : originalNrrData;
+            
+            Object.keys(activeNrrState).forEach(team => {
+                simNrrData[team] = {
+                    runsScored: activeNrrState[team].runsScored,
+                    oversFaced: activeNrrState[team].oversFaced,
+                    runsConceded: activeNrrState[team].runsConceded,
+                    oversBowled: activeNrrState[team].oversBowled
+                };
+            });
+
             for (let i = 0; i < remainingMatches.length; i++) {
                 const match = remainingMatches[i], random = Math.random();
-                if (random < 0.49) teamMap[match.home].Pts += 2;
-                else if (random < 0.98) teamMap[match.away].Pts += 2;
-                else { teamMap[match.home].Pts += 1; teamMap[match.away].Pts += 1; }
+                let winnerName = null, loserName = null;
+
+                if (random < 0.49) { winnerName = match.home; loserName = match.away; }
+                else if (random < 0.98) { winnerName = match.away; loserName = match.home; }
+                else { teamMap[match.home].Pts += 1; teamMap[match.away].Pts += 1; continue; }
+
+                teamMap[winnerName].Pts += 2;
+
+                if (Math.random() < 0.5) {
+                    let runMargin = Math.floor(Math.pow(Math.random(), 2.5) * 120) + 1;
+                    let target = Math.floor(Math.random() * 60) + 160; 
+                    
+                    simNrrData[winnerName].runsScored += target;
+                    simNrrData[winnerName].oversFaced += 20;
+                    simNrrData[winnerName].runsConceded += (target - runMargin);
+                    simNrrData[winnerName].oversBowled += 20;
+
+                    simNrrData[loserName].runsScored += (target - runMargin);
+                    simNrrData[loserName].oversFaced += 20;
+                    simNrrData[loserName].runsConceded += target;
+                    simNrrData[loserName].oversBowled += 20;
+                } else {
+                    let ballsRemaining = Math.floor(Math.pow(Math.random(), 2.5) * 70) + 1;
+                    let target = Math.floor(Math.random() * 60) + 150; 
+                    let oversFaced = (120 - ballsRemaining) / 6;
+
+                    simNrrData[winnerName].runsScored += target + Math.floor(Math.random() * 4);
+                    simNrrData[winnerName].oversFaced += oversFaced;
+                    simNrrData[winnerName].runsConceded += target;
+                    simNrrData[winnerName].oversBowled += 20;
+
+                    simNrrData[loserName].runsScored += target;
+                    simNrrData[loserName].oversFaced += 20;
+                    simNrrData[loserName].runsConceded += target + Math.floor(Math.random() * 4);
+                    simNrrData[loserName].oversBowled += oversFaced;
+                }
             }
 
+            simTeams.forEach(t => {
+                let d = simNrrData[t.name];
+                t.simNRR = (d.runsScored / d.oversFaced) - (d.runsConceded / d.oversBowled);
+            });
+
+            // Clean sorting using explicit math, matching index.html parity
             simTeams.sort((a, b) => {
                 if (b.Pts !== a.Pts) return b.Pts - a.Pts;
-                return (b.NRR + (Math.random() * 0.4 - 0.2)) - (a.NRR + (Math.random() * 0.4 - 0.2));
+                return b.simNRR - a.simNRR;
             });
 
             for(let i=0; i<4; i++) {
@@ -441,7 +493,6 @@
             team.top2Chance = ((top2Count[team.name] / numSimulations) * 100).toFixed(2);
         });
     }
-
     function resetAllData() {
         ptsData = JSON.parse(JSON.stringify(originalPtsData));
         nrrData = JSON.parse(JSON.stringify(originalNrrData));
